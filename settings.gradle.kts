@@ -65,6 +65,7 @@ include(":policy:policy-02-provision:policy-provision-provider")
 include(":policy:policy-02-provision:policy-provision")
 include(":policy:policy-02-provision:policy-transfer-file-local")
 include(":policy:policy-02-provision:policy-provision-provider-policy-functions")
+include(":policy:policy-02-provision:policy-provision-consumer-policy-functions")
 
 // modules for code samples ------------------------------------------------------------------------
 include(":advanced:advanced-02-custom-runtime")
