@@ -57,6 +57,7 @@ include(":policy:policy-02-provision:policy-provision-provider-policy-functions"
 include(":policy:policy-02-provision:policy-provision-consumer-policy-functions")
 include(":policy:policy-02-provision:policy-provision-provider")
 include(":policy:policy-02-provision:policy-provision-consumer")
+include(":policy:policy-02-provision:policy-provision-integration-tests")
 
 // federated catalog
 include(":federated-catalog:fc-00-basic:federated-catalog-base")
