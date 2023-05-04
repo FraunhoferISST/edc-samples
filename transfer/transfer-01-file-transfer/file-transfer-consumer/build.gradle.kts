@@ -34,7 +34,22 @@ dependencies {
     implementation("$groupId:auth-tokenbased:$edcVersion")
     implementation("$groupId:management-api:$edcVersion")
 
-    implementation("$groupId:ids:$edcVersion")
+    implementation("$groupId:dsp-api-configuration:$edcVersion")
+    implementation("$groupId:dsp-http-core:$edcVersion")
+    implementation("$groupId:dsp-http-spi:$edcVersion")
+    implementation("$groupId:dsp-transform:$edcVersion")
+    implementation("$groupId:dsp-catalog-http-dispatcher:$edcVersion")
+    implementation("$groupId:dsp-catalog-transform:$edcVersion")
+    implementation("$groupId:dsp-catalog-api:$edcVersion")
+    implementation("$groupId:dsp-negotiation-http-dispatcher:$edcVersion")
+    implementation("$groupId:dsp-negotiation-transform:$edcVersion")
+    implementation("$groupId:dsp-negotiation-api:$edcVersion")
+    implementation("$groupId:dsp-transfer-process-http-dispatcher:$edcVersion")
+    implementation("$groupId:dsp-transfer-process-transform:$edcVersion")
+    implementation("$groupId:dsp-transfer-process-api:$edcVersion")
+
+    implementation("$groupId:data-plane-selector-core:$edcVersion")
+
 
     implementation(project(":transfer:transfer-01-file-transfer:status-checker"))
 
