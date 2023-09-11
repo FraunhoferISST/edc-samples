@@ -22,6 +22,8 @@ dependencies {
 
     testImplementation(libs.awaitility)
     testImplementation(libs.restAssured)
+    testImplementation("junit:junit:4.13.1")
+    testImplementation("junit:junit:4.13.1")
 
     // runtimes
     testCompileOnly(project(":basic:basic-01-basic-connector"))

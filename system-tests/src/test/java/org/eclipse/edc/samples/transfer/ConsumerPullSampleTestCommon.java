@@ -1,6 +1,7 @@
 package org.eclipse.edc.samples.transfer;
 
 import io.restassured.http.ContentType;
+import io.restassured.http.Header;
 import org.apache.http.HttpStatus;
 
 import static io.restassured.RestAssured.given;
@@ -207,5 +208,15 @@ public class ConsumerPullSampleTestCommon {
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .body("edc:state", equalTo("COMPLETED"));
+    }
+
+    public void pullData(String authCode) {
+        given()
+                .header("Authorization",authCode)
+                .when()
+                .get("http://localhost:29291/public/1")
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .body("name",equalTo("Leanne Graham"));
     }
 }
