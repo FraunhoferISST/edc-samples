@@ -1,7 +1,6 @@
 package org.eclipse.edc.samples.transfer;
 
 import io.restassured.http.ContentType;
-import io.restassured.http.Header;
 import org.apache.http.HttpStatus;
 
 import static io.restassured.RestAssured.given;
@@ -10,28 +9,74 @@ import static org.hamcrest.Matchers.*;
 public class ConsumerPullSampleTestCommon {
 
     static final String MANAGEMENT_API_URL = "http://localhost:19193";
-    String ContractOfferId;
-    String ContractNegotiationId;
-    String ContractAgreementId;
-    String TransferProcessId;
 
     public ConsumerPullSampleTestCommon() {
     }
 
+    public void registerDataPlaneInstanceProvider() {
+        var requestBody = """
+                {
+                    "@context": {
+                        "edc": "https://w3id.org/edc/v0.0.1/ns/"
+                    },
+                    "@id": "http-pull-provider-dataplane",
+                    "url": "http://localhost:19192/control/transfer",
+                    "allowedSourceTypes": ["HttpData"],
+                    "allowedDestTypes": ["HttpProxy", "HttpData"],
+                    "properties": {
+                        "https://w3id.org/edc/v0.0.1/ns/publicApiUrl": "http://localhost:19291/public/"
+                    }
+                }""";
+
+        given()
+                .header("Content-Type", "application/json")
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .post(MANAGEMENT_API_URL + "/management/v2/dataplanes")
+                .then()
+                .statusCode(HttpStatus.SC_OK);
+    }
+    public void registerDataPlaneInstanceConsumer() {
+        var requestBody = """
+                {
+                    "@context": {
+                        "edc": "https://w3id.org/edc/v0.0.1/ns/"
+                    },
+                    "@id": "http-pull-consumer-dataplane",
+                    "url": "http://localhost:29192/control/transfer",
+                    "allowedSourceTypes": ["HttpData"],
+                    "allowedDestTypes": ["HttpProxy", "HttpData"],
+                    "properties": {
+                        "https://w3id.org/edc/v0.0.1/ns/publicApiUrl/publicApiUrl": "http://localhost:29291/public/"
+                    }
+                }""";
+
+        given()
+                .header("Content-Type", "application/json")
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .post("http://localhost:29193/management/v2/dataplanes")
+                .then()
+                .statusCode(HttpStatus.SC_OK);
+    }
+
     public void createAsset(){
-        String requestBody = "{\n" +
-                "    \"@context\": {\n" +
-                "        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\",\n" +
-                "        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n" +
-                "    },\n" +
-                "    \"@id\": \"aPolicy\",\n" +
-                "    \"policy\": {\n" +
-                "        \"@type\": \"set\",\n" +
-                "        \"odrl:permission\": [],\n" +
-                "        \"odrl:prohibition\": [],\n" +
-                "        \"odrl:obligation\": []\n" +
-                "    }\n" +
-                "}";
+        var requestBody = """
+                {
+                    "@context": {
+                        "edc": "https://w3id.org/edc/v0.0.1/ns/",
+                        "odrl": "http://www.w3.org/ns/odrl/2/"
+                    },
+                    "@id": "aPolicy",
+                    "policy": {
+                        "@type": "set",
+                        "odrl:permission": [],
+                        "odrl:prohibition": [],
+                        "odrl:obligation": []
+                    }
+                }""";
 
         given().headers("Content-Type","application/json")
                 .contentType(ContentType.JSON)
@@ -44,19 +89,20 @@ public class ConsumerPullSampleTestCommon {
     }
 
     public void createPolicyDefinition() {
-        String requestBody = "{\n" +
-                "    \"@context\": {\n" +
-                "        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\",\n" +
-                "        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n" +
-                "    },\n" +
-                "    \"@id\": \"aPolicy\",\n" +
-                "    \"policy\": {\n" +
-                "        \"@type\": \"set\",\n" +
-                "        \"odrl:permission\": [],\n" +
-                "        \"odrl:prohibition\": [],\n" +
-                "        \"odrl:obligation\": []\n" +
-                "    }\n" +
-                "}";
+        var requestBody = """
+                {
+                    "@context": {
+                        "edc": "https://w3id.org/edc/v0.0.1/ns/",
+                        "odrl": "http://www.w3.org/ns/odrl/2/"
+                    },
+                    "@id": "aPolicy",
+                    "policy": {
+                        "@type": "set",
+                        "odrl:permission": [],
+                        "odrl:prohibition": [],
+                        "odrl:obligation": []
+                    }
+                }""";
 
         given()
                 .header("Content-Type", "application/json")
@@ -69,18 +115,19 @@ public class ConsumerPullSampleTestCommon {
                 .body("@id", not(emptyString()));
     }
 
-    public void createContractDefinition(){
-        String requestBody = "{\n" +
-                "    \"@context\": {\n" +
-                "        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n" +
-                "    },\n" +
-                "    \"@id\": \"1\",\n" +
-                "    \"accessPolicyId\": \"aPolicy\",\n" +
-                "    \"contractPolicyId\": \"aPolicy\",\n" +
-                "    \"assetsSelector\": []\n" +
-                "}";
+    public String createContractDefinition(){
+        var requestBody = """
+                {
+                    "@context": {
+                        "edc": "https://w3id.org/edc/v0.0.1/ns/"
+                    },
+                    "@id": "1",
+                    "accessPolicyId": "aPolicy",
+                    "contractPolicyId": "aPolicy",
+                    "assetsSelector": []
+                }""";
 
-        ContractOfferId=given()
+        return given()
                 .header("Content-Type", "application/json")
                 .contentType(ContentType.JSON)
                 .body(requestBody)
@@ -95,13 +142,14 @@ public class ConsumerPullSampleTestCommon {
     }
 
     public void fetchCatalog(){
-        String requestBody = "{\n" +
-                "    \"@context\": {\n" +
-                "        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n" +
-                "    },\n" +
-                "    \"providerUrl\": \"http://localhost:19194/protocol\",\n" +
-                "    \"protocol\": \"dataspace-protocol-http\"\n" +
-                "}";
+        var requestBody = """
+                {
+                    "@context": {
+                        "edc": "https://w3id.org/edc/v0.0.1/ns/"
+                    },
+                    "providerUrl": "http://localhost:19194/protocol",
+                    "protocol": "dataspace-protocol-http"
+                }""";
 
         given()
                 .header("Content-Type", "application/json")
@@ -115,33 +163,34 @@ public class ConsumerPullSampleTestCommon {
                 .body("@type",equalTo("dcat:Catalog"));
     }
 
-    public void initiateContractNegotiation(){
-        String requestBody = "{\n" +
-                "    \"@context\": {\n" +
-                "        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\",\n" +
-                "        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n" +
-                "    },\n" +
-                "    \"@type\": \"NegotiationInitiateRequestDto\",\n" +
-                "    \"connectorId\": \"provider\",\n" +
-                "    \"connectorAddress\": \"http://localhost:19194/protocol\",\n" +
-                "    \"consumerId\": \"consumer\",\n" +
-                "    \"providerId\": \"provider\",\n" +
-                "    \"protocol\": \"dataspace-protocol-http\",\n" +
-                "    \"offer\": {\n" +
-                "        \"offerId\": \"MQ==:YXNzZXRJZA==:YTc4OGEwYjMtODRlZi00NWYwLTgwOWQtMGZjZTMwMGM3Y2Ey\",\n" +
-                "        \"assetId\": \"assetId\",\n" +
-                "        \"policy\": {\n" +
-                "            \"@id\": \"MQ==:YXNzZXRJZA==:YTc4OGEwYjMtODRlZi00NWYwLTgwOWQtMGZjZTMwMGM3Y2Ey\",\n" +
-                "            \"@type\": \"Set\",\n" +
-                "            \"odrl:permission\": [],\n" +
-                "            \"odrl:prohibition\": [],\n" +
-                "            \"odrl:obligation\": [],\n" +
-                "            \"odrl:target\": \"assetId\"\n" +
-                "        }\n" +
-                "    }\n" +
-                "}";
+    public String initiateContractNegotiation(){
+        var requestBody = """
+                {
+                    "@context": {
+                        "edc": "https://w3id.org/edc/v0.0.1/ns/",
+                        "odrl": "http://www.w3.org/ns/odrl/2/"
+                    },
+                    "@type": "NegotiationInitiateRequestDto",
+                    "connectorId": "provider",
+                    "connectorAddress": "http://localhost:19194/protocol",
+                    "consumerId": "consumer",
+                    "providerId": "provider",
+                    "protocol": "dataspace-protocol-http",
+                    "offer": {
+                        "offerId": "MQ==:YXNzZXRJZA==:YTc4OGEwYjMtODRlZi00NWYwLTgwOWQtMGZjZTMwMGM3Y2Ey",
+                        "assetId": "assetId",
+                        "policy": {
+                            "@id": "MQ==:YXNzZXRJZA==:YTc4OGEwYjMtODRlZi00NWYwLTgwOWQtMGZjZTMwMGM3Y2Ey",
+                            "@type": "Set",
+                            "odrl:permission": [],
+                            "odrl:prohibition": [],
+                            "odrl:obligation": [],
+                            "odrl:target": "assetId"
+                        }
+                    }
+                }""";
 
-        ContractNegotiationId=given()
+        return given()
                 .header("Content-Type", "application/json")
                 .contentType(ContentType.JSON)
                 .body(requestBody)
@@ -157,8 +206,8 @@ public class ConsumerPullSampleTestCommon {
 
     }
 
-    public void getContractAgreement(String negotiationId) {
-        ContractAgreementId = given()
+    public String getContractAgreement(String negotiationId) {
+        return given()
                 .header("Content-Type", "application/json")
                 .when()
                 .get(MANAGEMENT_API_URL + "/management/v2/contractnegotiations/" + negotiationId)
@@ -170,8 +219,8 @@ public class ConsumerPullSampleTestCommon {
                 .get("@id");
     }
 
-    public void createTransferProcess(String contractAgreementId) {
-        String requestBody = "{\n" +
+    public String createTransferProcess(String contractAgreementId) {
+        var requestBody = "{\n" +
                 "    \"@context\": {\n" +
                 "        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n" +
                 "    },\n" +
@@ -187,7 +236,7 @@ public class ConsumerPullSampleTestCommon {
                 "    }\n" +
                 "}";
 
-        TransferProcessId=given()
+        return given()
                 .header("Content-Type", "application/json")
                 .contentType(ContentType.JSON)
                 .body(requestBody)
