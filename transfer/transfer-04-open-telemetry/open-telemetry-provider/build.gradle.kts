@@ -28,6 +28,7 @@ dependencies {
 
     implementation(libs.edc.auth.tokenbased)
     implementation(libs.edc.management.api)
+    implementation(libs.edc.control.plane.api.client)
 
     implementation(libs.edc.dsp)
 

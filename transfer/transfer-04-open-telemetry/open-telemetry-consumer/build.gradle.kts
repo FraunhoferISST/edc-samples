@@ -28,6 +28,7 @@ dependencies {
 
     implementation(libs.edc.auth.tokenbased)
     implementation(libs.edc.management.api)
+    implementation(libs.edc.data.plane.selector.core)
 
     implementation(libs.edc.dsp)
     runtimeOnly(libs.edc.jersey.micrometer)
