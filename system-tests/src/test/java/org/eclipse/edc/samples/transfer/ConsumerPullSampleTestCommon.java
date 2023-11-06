@@ -4,7 +4,9 @@ import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.emptyString;
 
 public class ConsumerPullSampleTestCommon {
 
@@ -37,6 +39,7 @@ public class ConsumerPullSampleTestCommon {
                 .then()
                 .statusCode(HttpStatus.SC_OK);
     }
+
     public void registerDataPlaneInstanceConsumer() {
         var requestBody = """
                 {
@@ -62,7 +65,7 @@ public class ConsumerPullSampleTestCommon {
                 .statusCode(HttpStatus.SC_OK);
     }
 
-    public void createAsset(){
+    public void createAsset() {
         var requestBody = """
                 {
                     "@context": {
@@ -78,11 +81,11 @@ public class ConsumerPullSampleTestCommon {
                     }
                 }""";
 
-        given().headers("Content-Type","application/json")
+        given().headers("Content-Type", "application/json")
                 .contentType(ContentType.JSON)
                 .body(requestBody)
                 .when()
-                .post(MANAGEMENT_API_URL+"/management/v2/assets")
+                .post(MANAGEMENT_API_URL + "/management/v2/assets")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .body("@id", not(emptyString()));
@@ -115,7 +118,7 @@ public class ConsumerPullSampleTestCommon {
                 .body("@id", not(emptyString()));
     }
 
-    public String createContractDefinition(){
+    public String createContractDefinition() {
         var requestBody = """
                 {
                     "@context": {
@@ -141,7 +144,7 @@ public class ConsumerPullSampleTestCommon {
                 .get("@id");
     }
 
-    public void fetchCatalog(){
+    public void fetchCatalog() {
         var requestBody = """
                 {
                     "@context": {
@@ -159,11 +162,11 @@ public class ConsumerPullSampleTestCommon {
                 .post("http://localhost:29193/management/v2/catalog/request")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body("@id",not(emptyString()))
-                .body("@type",equalTo("dcat:Catalog"));
+                .body("@id", not(emptyString()))
+                .body("@type", equalTo("dcat:Catalog"));
     }
 
-    public String initiateContractNegotiation(){
+    public String initiateContractNegotiation() {
         var requestBody = """
                 {
                     "@context": {
@@ -198,7 +201,7 @@ public class ConsumerPullSampleTestCommon {
                 .post("http://localhost:29193/management/v2/contractnegotiations")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body("@id",not(emptyString()))
+                .body("@id", not(emptyString()))
                 .extract()
                 .jsonPath()
                 .get("@id");
@@ -213,7 +216,7 @@ public class ConsumerPullSampleTestCommon {
                 .get(MANAGEMENT_API_URL + "/management/v2/contractnegotiations/" + negotiationId)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body("edc:state",equalTo("FINALIZED"))
+                .body("edc:state", equalTo("FINALIZED"))
                 .extract()
                 .jsonPath()
                 .get("@id");
@@ -244,7 +247,7 @@ public class ConsumerPullSampleTestCommon {
                 .post("http://localhost:29193/management/v2/transferprocesses")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body("@id",not(emptyString()))
+                .body("@id", not(emptyString()))
                 .extract()
                 .jsonPath()
                 .get("@id");
@@ -266,6 +269,6 @@ public class ConsumerPullSampleTestCommon {
                 .get("http://localhost:29291/public/1")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body("name",equalTo("Leanne Graham"));
+                .body("name", equalTo("Leanne Graham"));
     }
 }

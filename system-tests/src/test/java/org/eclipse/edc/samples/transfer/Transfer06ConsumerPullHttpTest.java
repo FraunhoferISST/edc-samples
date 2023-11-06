@@ -2,6 +2,8 @@ package org.eclipse.edc.samples.transfer;
 
 import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.junit.extensions.EdcRuntimeExtension;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -13,12 +15,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import org.junit.After;
-import org.junit.Before;
 
 import static org.eclipse.edc.samples.transfer.FileTransferSampleTestCommon.getFileFromRelativePath;
 
-@EndToEndTest
+//@EndToEndTest
 public class Transfer06ConsumerPullHttpTest {
 
     static final String CONSUMER_CONFIG_PROPERTIES_FILE_PATH = "transfer/transfer-06-consumer-pull-http/http-pull-consumer/consumer-configuration.properties";
@@ -33,7 +33,7 @@ public class Transfer06ConsumerPullHttpTest {
     String contractNegotiationId;
     String contractAgreementId;
     String transferProcessId;
-    private static InputStream serverLogStream=null;
+    private static InputStream serverLogStream = null;
 
     private Process serverProcess;
 
@@ -45,9 +45,9 @@ public class Transfer06ConsumerPullHttpTest {
                     // Override 'edc.samples.transfer.01.asset.path' implicitly set via property 'edc.fs.config'.
                     "edc.samples.transfer.06.asset.path", getFileFromRelativePath(SAMPLE_ASSET_FILE_PATH).getAbsolutePath(),
                     "edc.fs.config", getFileFromRelativePath(PROVIDER_CONFIG_PROPERTIES_FILE_PATH).getAbsolutePath(),
-                    "edc.keystore",getFileFromRelativePath(SAMPLE_CERT_FILE_PATH).getAbsolutePath(),
+                    "edc.keystore", getFileFromRelativePath(SAMPLE_CERT_FILE_PATH).getAbsolutePath(),
                     "edc.keystore.password","12345",
-                    "edc.vault",getFileFromRelativePath(PROVIDER_VAULT_PROPERTIES_FILE_PATH).getAbsolutePath()
+                    "edc.vault", getFileFromRelativePath(PROVIDER_VAULT_PROPERTIES_FILE_PATH).getAbsolutePath()
 
 
             )
@@ -61,8 +61,8 @@ public class Transfer06ConsumerPullHttpTest {
                     "edc.samples.transfer.06.asset.path", getFileFromRelativePath(SAMPLE_ASSET_FILE_PATH).getAbsolutePath(),
                     "edc.fs.config", getFileFromRelativePath(CONSUMER_CONFIG_PROPERTIES_FILE_PATH).getAbsolutePath(),
                     "edc.keystore.password","12345",
-                    "edc.keystore",getFileFromRelativePath(SAMPLE_CERT_FILE_PATH).getAbsolutePath(),
-                    "edc.vault",getFileFromRelativePath(CONSUMER_VAULT_PROPERTIES_FILE_PATH).getAbsolutePath()
+                    "edc.keystore", getFileFromRelativePath(SAMPLE_CERT_FILE_PATH).getAbsolutePath(),
+                    "edc.vault", getFileFromRelativePath(CONSUMER_VAULT_PROPERTIES_FILE_PATH).getAbsolutePath()
 
             )
     );
@@ -77,6 +77,11 @@ public class Transfer06ConsumerPullHttpTest {
 
         Logger logger = Logger.getLogger("HTTPServerLogger");
         serverLogStream = serverProcess.getInputStream();
+    }
+
+    @After
+    public void stopServer() {
+        serverProcess.destroy();
     }
 
     private static String findAuthCode(InputStream logStream) throws IOException {
@@ -96,10 +101,6 @@ public class Transfer06ConsumerPullHttpTest {
         return authCode;
     }
 
-    @After
-    public void stopServer() {
-        serverProcess.destroy();
-    }
 
     @Test
     void runSampleSteps() throws Exception {

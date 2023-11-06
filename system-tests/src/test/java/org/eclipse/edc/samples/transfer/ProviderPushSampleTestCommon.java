@@ -4,8 +4,10 @@ import com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.HttpStatus;
 import io.restassured.http.ContentType;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.containsString;
 
 public class ProviderPushSampleTestCommon {
     static final String MANAGEMENT_API_URL = "http://localhost:19193";
@@ -136,8 +138,8 @@ public class ProviderPushSampleTestCommon {
                 .post("http://localhost:29193/management/v2/catalog/request")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body("@id",not(emptyString()))
-                .body("@type",equalTo("dcat:Catalog"));
+                .body("@id", not(emptyString()))
+                .body("@type", equalTo("dcat:Catalog"));
     }
 
     public String initiateContractNegotiation() {
@@ -175,7 +177,7 @@ public class ProviderPushSampleTestCommon {
                 .post("http://localhost:29193/management/v2/contractnegotiations")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body("@id",not(emptyString()))
+                .body("@id", not(emptyString()))
                 .extract()
                 .jsonPath()
                 .get("@id");
@@ -188,7 +190,7 @@ public class ProviderPushSampleTestCommon {
                 .get("http://localhost:29193/management/v2/contractnegotiations/" + contractNegotiationId)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body("@type",equalTo("edc:ContractNegotiationDto"))
+                .body("@type", equalTo("edc:ContractNegotiationDto"))
                 .extract()
                 .jsonPath()
                 .get("edc:contractAgreementId");
@@ -219,7 +221,7 @@ public class ProviderPushSampleTestCommon {
                 .post("http://localhost:29193/management/v2/transferprocesses")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body("@id",not(emptyString()))
+                .body("@id", not(emptyString()))
                 .extract()
                 .jsonPath()
                 .get("@id");
