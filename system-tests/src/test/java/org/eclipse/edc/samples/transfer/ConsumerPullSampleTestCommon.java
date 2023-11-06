@@ -4,9 +4,9 @@ import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.emptyString;
 
 public class ConsumerPullSampleTestCommon {
 
@@ -264,7 +264,7 @@ public class ConsumerPullSampleTestCommon {
 
     public void pullData(String authCode) {
         given()
-                .header("Authorization",authCode)
+                .header("Authorization", authCode)
                 .when()
                 .get("http://localhost:29291/public/1")
                 .then()

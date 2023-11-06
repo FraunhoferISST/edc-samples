@@ -10,7 +10,7 @@ import java.util.Map;
 
 import static org.eclipse.edc.samples.transfer.FileTransferSampleTestCommon.getFileFromRelativePath;
 
-//@EndToEndTest
+@EndToEndTest
 public class Transfer07ProviderPushHttpTest {
 
     static final String CONSUMER_CONFIG_PROPERTIES_FILE_PATH = "transfer/transfer-07-provider-push-http/http-push-consumer/consumer-configuration.properties";
@@ -52,14 +52,14 @@ public class Transfer07ProviderPushHttpTest {
             )
     );
 
-    //@Before
+    @Before
     public void startServer() throws Exception {
         var command = "HTTP_SERVER_PORT=4000 java -jar util/http-request-logger/build/libs/http-request-logger.jar";
         Process serverProcess = Runtime.getRuntime().exec(command);
         Thread.sleep(2000);
     }
 
-    final ProviderPushSampleTestCommon testUtils= new ProviderPushSampleTestCommon();
+    final ProviderPushSampleTestCommon testUtils = new ProviderPushSampleTestCommon();
 
     @Test
     void runSampleSteps() throws Exception {
@@ -68,9 +68,9 @@ public class Transfer07ProviderPushHttpTest {
         testUtils.createPolicyDefinition();
         testUtils.createContractDefinition();
         testUtils.fetchCatalog();
-        contractNegotiationId= testUtils.initiateContractNegotiation();
-        contractAgreementId= testUtils.getContractAgreement(contractNegotiationId);
-        transferProcessId= testUtils.createTransferProcess(contractAgreementId);
+        contractNegotiationId = testUtils.initiateContractNegotiation();
+        contractAgreementId = testUtils.getContractAgreement(contractNegotiationId);
+        transferProcessId = testUtils.createTransferProcess(contractAgreementId);
         testUtils.getTransferProcess(transferProcessId);
     }
 

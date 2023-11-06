@@ -15,10 +15,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-
 import static org.eclipse.edc.samples.transfer.FileTransferSampleTestCommon.getFileFromRelativePath;
 
-//@EndToEndTest
+@EndToEndTest
 public class Transfer06ConsumerPullHttpTest {
 
     static final String CONSUMER_CONFIG_PROPERTIES_FILE_PATH = "transfer/transfer-06-consumer-pull-http/http-pull-consumer/consumer-configuration.properties";
@@ -46,7 +45,7 @@ public class Transfer06ConsumerPullHttpTest {
                     "edc.samples.transfer.06.asset.path", getFileFromRelativePath(SAMPLE_ASSET_FILE_PATH).getAbsolutePath(),
                     "edc.fs.config", getFileFromRelativePath(PROVIDER_CONFIG_PROPERTIES_FILE_PATH).getAbsolutePath(),
                     "edc.keystore", getFileFromRelativePath(SAMPLE_CERT_FILE_PATH).getAbsolutePath(),
-                    "edc.keystore.password","12345",
+                    "edc.keystore.password", "12345",
                     "edc.vault", getFileFromRelativePath(PROVIDER_VAULT_PROPERTIES_FILE_PATH).getAbsolutePath()
 
 
@@ -60,14 +59,14 @@ public class Transfer06ConsumerPullHttpTest {
             Map.of(
                     "edc.samples.transfer.06.asset.path", getFileFromRelativePath(SAMPLE_ASSET_FILE_PATH).getAbsolutePath(),
                     "edc.fs.config", getFileFromRelativePath(CONSUMER_CONFIG_PROPERTIES_FILE_PATH).getAbsolutePath(),
-                    "edc.keystore.password","12345",
+                    "edc.keystore.password", "12345",
                     "edc.keystore", getFileFromRelativePath(SAMPLE_CERT_FILE_PATH).getAbsolutePath(),
                     "edc.vault", getFileFromRelativePath(CONSUMER_VAULT_PROPERTIES_FILE_PATH).getAbsolutePath()
 
             )
     );
 
-    final ConsumerPullSampleTestCommon testUtils =new ConsumerPullSampleTestCommon();
+    final ConsumerPullSampleTestCommon testUtils = new ConsumerPullSampleTestCommon();
 
     @Before
     public void startServer() throws Exception {
@@ -88,12 +87,12 @@ public class Transfer06ConsumerPullHttpTest {
         var reader = new BufferedReader(new InputStreamReader(logStream));
         String line;
         var pattern = Pattern.compile("\"authCode\": \"(.*?)\"");
-        String authCode=null;
+        String authCode = null;
 
         while ((line = reader.readLine()) != null) {
             var matcher = pattern.matcher(line);
             if (matcher.find()) {
-                authCode= matcher.group(1);
+                authCode = matcher.group(1);
                 break;
             }
         }

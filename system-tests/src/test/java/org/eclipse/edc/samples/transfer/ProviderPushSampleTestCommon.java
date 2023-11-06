@@ -4,10 +4,11 @@ import com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.HttpStatus;
 import io.restassured.http.ContentType;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+
 
 public class ProviderPushSampleTestCommon {
     static final String MANAGEMENT_API_URL = "http://localhost:19193";
@@ -26,7 +27,7 @@ public class ProviderPushSampleTestCommon {
                 "allowedSourceTypes": ["HttpData"],
                 "allowedDestTypes": ["HttpProxy", "HttpData"],
                 "properties": {
-                    "https://w3id.org/edc/v0.0.1/ns/publicApiUrl/publicApiUrl": "http://localhost:29291/public/"
+                "https://w3id.org/edc/v0.0.1/ns/publicApiUrl/publicApiUrl": "http://localhost:29291/public/"
                 }
             }""";
 
@@ -116,7 +117,7 @@ public class ProviderPushSampleTestCommon {
                 .post(MANAGEMENT_API_URL + "/management/v2/contractdefinitions")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body("@id",not(emptyString()));
+                .body("@id", not(emptyString()));
 
     }
 
