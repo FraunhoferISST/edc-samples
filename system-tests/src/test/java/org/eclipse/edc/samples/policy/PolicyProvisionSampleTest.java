@@ -14,6 +14,8 @@
 
 package org.eclipse.edc.samples.policy;
 
+import org.eclipse.edc.connector.controlplane.transfer.spi.types.TransferProcessStates;
+import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.junit.extensions.EdcRuntimeExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +30,7 @@ import static org.eclipse.edc.samples.policy.PolicyProvisionSampleTestCommon.get
  * We will be providing a destination file path, as we have used in previous samples for file transfers.
  * However, because of our policy, the file will be stored in the desired location (NOT in the provided destination file path) that is defined in the policy.
  */
-//@EndToEndTest
+@EndToEndTest
 public class PolicyProvisionSampleTest {
     static final String CONSUMER_CONFIG_PROPERTIES_FILE_PATH = "policy/policy-02-provision/policy-provision-consumer/config.properties";
     static final String PROVIDER_CONFIG_PROPERTIES_FILE_PATH = "policy/policy-02-provision/policy-provision-provider/config.properties";
@@ -69,7 +71,7 @@ public class PolicyProvisionSampleTest {
         var transferProcessId = testUtils.requestTransferFile();
         testUtils.assertDestinationFileContent();
         testUtils.assertFileDoesNotExist();
-        testUtils.assertTransferProcessStatusConsumerSide(transferProcessId);
+        testUtils.checkTransferStatus(transferProcessId, TransferProcessStates.COMPLETED);
     }
 
     @AfterEach
