@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.path.json.JsonPath;
 import org.apache.http.HttpStatus;
 import org.eclipse.edc.connector.controlplane.transfer.spi.types.TransferProcessStates;
 import org.eclipse.edc.connector.controlplane.transfer.spi.types.TransferProcess;
@@ -30,11 +29,12 @@ import org.eclipse.edc.policy.model.LiteralExpression;
 import org.eclipse.edc.policy.model.Operator;
 import org.eclipse.edc.policy.model.Permission;
 import org.eclipse.edc.policy.model.Policy;
-import org.eclipse.edc.spi.types.domain.DataAddress;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,6 +49,10 @@ public class PolicyProvisionSampleTestCommon {
     static final String TRANSFER_PROCESS_URI = "http://localhost:9192/management/v2/transferprocesses";
     static final String API_KEY_HEADER_KEY = "X-Api-Key";
     static final String API_KEY_HEADER_VALUE = "password";
+    public static final Duration TIMEOUT = Duration.ofSeconds(30);
+    public static final Duration POLL_DELAY = Duration.ofMillis(1000);
+    public static final Duration POLL_INTERVAL = Duration.ofMillis(500);
+    private static final String EDC_STATE = "state";
     //endregion
 
     //region changeable test settings
@@ -186,15 +190,7 @@ public class PolicyProvisionSampleTestCommon {
         var contractOfferFile = new File(TestUtils.findBuildRoot(), PolicyProvisionSampleTest.CONTRACT_OFFER_FILE_PATH);
         ObjectNode contractOfferJsonRootNode = MAPPER.readValue(contractOfferFile, ObjectNode.class);
 
-        ObjectNode policyNode = (ObjectNode) contractOfferJsonRootNode.get("policy");
-        if (policyNode == null) {
-            throw new IOException("The 'policy' node is missing in the contract offer file.");
-        }
 
-
-        policyNode.putPOJO("odrl:permission", createContractPolicy().getPermissions());
-        System.out.println("policy node " + policyNode);
-        System.out.println("contract offer : " + contractOfferJsonRootNode);
 
 
         var response = RestAssured
@@ -202,11 +198,9 @@ public class PolicyProvisionSampleTestCommon {
                 .headers(API_KEY_HEADER_KEY, API_KEY_HEADER_VALUE)
                 .contentType(ContentType.JSON)
                 .body(contractOfferJsonRootNode)
-                .log().all()
                 .when()
                 .post(INITIATE_CONTRACT_NEGOTIATION_URI)
                 .then()
-                .log().all()
                 .statusCode(HttpStatus.SC_OK)
                 .extract()
                 .response();
@@ -243,7 +237,7 @@ public class PolicyProvisionSampleTestCommon {
                     .get(url)
                     .then()
                     .statusCode(HttpStatus.SC_OK)
-                    .body("state", equalTo("CONFIRMED"))
+                    .body("state", equalTo("FINALIZED"))
                     .body("contractAgreementId", not(emptyString()))
                     .extract().body().jsonPath().getString("contractAgreementId");
 
@@ -253,70 +247,48 @@ public class PolicyProvisionSampleTestCommon {
         });
     }
 
-    /**
-     * Assert that a POST request to initiate transfer process is successful.
-     * This method corresponds to the command in the sample: {@code curl -X POST -H "Content-Type: application/json" -H "X-Api-Key: password" -d @filetransfer.json "http://localhost:9192/management/v2/transferprocesses"}
-     *
-     * @throws IOException Thrown if there was an error accessing the transfer request file defined in transferFilePath.
-     */
     String requestTransferFile() throws IOException {
-        var transferJsonFile = getFileFromRelativePath(PolicyProvisionSampleTest.TRANSFER_FILE_PATH);
-        TransferProcess sampleDataRequest = readAndUpdateDataRequestFromJsonFile(transferJsonFile, contractAgreementId);
+        var fileTransferFile = new File(TestUtils.findBuildRoot(), PolicyProvisionSampleTest.TRANSFER_FILE_PATH);
+        String fileTransferJson = new String(Files.readAllBytes(Paths.get(fileTransferFile.getPath())));
 
-        JsonPath jsonPath = RestAssured
+        fileTransferJson = fileTransferJson.replace("{{contract-agreement-id}}", contractAgreementId);
+
+        var response = RestAssured
                 .given()
                 .headers(API_KEY_HEADER_KEY, API_KEY_HEADER_VALUE)
                 .contentType(ContentType.JSON)
-                .body(sampleDataRequest)
+                .body(fileTransferJson)
                 .when()
+                .log().all()
                 .post(TRANSFER_PROCESS_URI)
                 .then()
+                .log().all()
                 .statusCode(HttpStatus.SC_OK)
-                .body("id", not(emptyString()))
                 .extract()
-                .jsonPath();
+                .response();
+        return response.jsonPath().getString("@id");
 
-        String transferProcessId = jsonPath.get("id");
 
-        assertThat(transferProcessId).isNotEmpty();
-
-        return transferProcessId;
+    }
+     void checkTransferStatus(String transferProcessId, TransferProcessStates status) {
+        await()
+                .atMost(TIMEOUT)
+                .pollDelay(POLL_DELAY)
+                .pollInterval(POLL_INTERVAL)
+                .untilAsserted(() -> {
+                    var state = get(transferProcessId);
+                    assertThat(state).isEqualTo(status.name());
+                });
     }
 
-    /**
-     * Reads a transfer request file with changed value for contract agreement ID and file destination path.
-     *
-     * @param transferJsonFile    A {@link File} instance pointing to a JSON transfer request file.
-     * @param contractAgreementId This string containing a UUID will be used as value for the contract agreement ID.
-     * @return An instance of {@link TransferProcess} with changed values for contract agreement ID and file destination path.
-     * @throws IOException Thrown if there was an error accessing the file given in transferJsonFile.
-     */
-    TransferProcess readAndUpdateDataRequestFromJsonFile(@NotNull File transferJsonFile, @NotNull String contractAgreementId) throws IOException {
-        TransferProcess sampleDataRequest = MAPPER.readValue(transferJsonFile, TransferProcess.class);
-
-        var changedAddressProperties = sampleDataRequest.getDataDestination().getProperties();
-        changedAddressProperties.put("path", destinationFile.getAbsolutePath());
-
-        DataAddress newDataDestination = DataAddress.Builder.newInstance()
-                .properties(changedAddressProperties)
-                .build();
-
-        return TransferProcess.Builder.newInstance()
-                .type(sampleDataRequest.getType())
-                .protocol(sampleDataRequest.getProtocol())
-                .correlationId(sampleDataRequest.getCorrelationId())
-                .counterPartyAddress(sampleDataRequest.getCounterPartyAddress())
-                .dataDestination(newDataDestination)
-                .assetId(sampleDataRequest.getAssetId())
-                .contractId(contractAgreementId)
-                .contentDataAddress(sampleDataRequest.getContentDataAddress())
-                .provisionedResourceSet(sampleDataRequest.getProvisionedResourceSet())
-                .deprovisionedResources(sampleDataRequest.getDeprovisionedResources())
-                .privateProperties(sampleDataRequest.getPrivateProperties())
-                .callbackAddresses(sampleDataRequest.getCallbackAddresses())
-                .transferType(sampleDataRequest.getTransferType())
-                .protocolMessages(sampleDataRequest.getProtocolMessages())
-                .dataPlaneId(sampleDataRequest.getDataPlaneId())
-                .build();
+    private String get(String transferProcessId) {
+        return RestAssured
+                .given()
+                .headers(API_KEY_HEADER_KEY, API_KEY_HEADER_VALUE)
+                .when()
+                .get(String.format("%s/%s", TRANSFER_PROCESS_URI, transferProcessId))
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .extract().jsonPath().getString(EDC_STATE);
     }
 }

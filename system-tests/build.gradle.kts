@@ -52,6 +52,10 @@ dependencies {
     testCompileOnly(project(":policy:policy-01-policy-enforcement:policy-enforcement-consumer"))
     testCompileOnly(project(":policy:policy-01-policy-enforcement:policy-functions"))
 
+    testCompileOnly(project(":policy:policy-02-provision:policy-provision-consumer"))
+    testCompileOnly(project(":policy:policy-02-provision:policy-provision-provider"))
+
+
     testCompileOnly(project(":transfer:transfer-05-file-transfer-cloud:cloud-transfer-provider"))
     testCompileOnly(project(":transfer:transfer-05-file-transfer-cloud:cloud-transfer-consumer"))
     testCompileOnly(project(":transfer:transfer-05-file-transfer-cloud:transfer-file-cloud"))
