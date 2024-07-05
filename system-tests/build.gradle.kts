@@ -47,6 +47,10 @@ dependencies {
     testCompileOnly(project(":policy:policy-01-policy-enforcement:policy-enforcement-provider"))
     testCompileOnly(project(":policy:policy-01-policy-enforcement:policy-enforcement-consumer"))
     testCompileOnly(project(":policy:policy-01-policy-enforcement:policy-functions"))
+
+    testCompileOnly(project(":policy:policy-02-provision:policy-provision-consumer"))
+    testCompileOnly(project(":policy:policy-02-provision:policy-provision-provider"))
+
 }
 
 tasks.compileJava {
