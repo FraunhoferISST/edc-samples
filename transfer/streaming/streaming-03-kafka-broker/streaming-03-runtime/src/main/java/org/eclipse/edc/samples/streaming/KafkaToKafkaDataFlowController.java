@@ -14,9 +14,10 @@
 
 package org.eclipse.edc.samples.streaming;
 
-import org.eclipse.edc.connector.transfer.spi.flow.DataFlowController;
-import org.eclipse.edc.connector.transfer.spi.types.DataFlowResponse;
-import org.eclipse.edc.connector.transfer.spi.types.TransferProcess;
+import org.eclipse.edc.connector.controlplane.asset.spi.domain.Asset;
+import org.eclipse.edc.connector.controlplane.transfer.spi.flow.DataFlowController;
+import org.eclipse.edc.connector.controlplane.transfer.spi.types.DataFlowResponse;
+import org.eclipse.edc.connector.controlplane.transfer.spi.types.TransferProcess;
 import org.eclipse.edc.dataaddress.kafka.spi.KafkaDataAddressSchema;
 import org.eclipse.edc.policy.model.Policy;
 import org.eclipse.edc.spi.response.StatusResult;
@@ -24,18 +25,19 @@ import org.eclipse.edc.spi.types.domain.DataAddress;
 import org.eclipse.edc.spi.types.domain.edr.EndpointDataReference;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+
 import static org.eclipse.edc.dataaddress.kafka.spi.KafkaDataAddressSchema.KAFKA_TYPE;
-import static org.eclipse.edc.spi.CoreConstants.EDC_NAMESPACE;
 
 class KafkaToKafkaDataFlowController implements DataFlowController {
 
     @Override
     public boolean canHandle(TransferProcess transferProcess) {
-        return KAFKA_TYPE.equals(transferProcess.getContentDataAddress().getType()) && "KafkaBroker".equals(transferProcess.getDestinationType());
+        return KAFKA_TYPE.equals(transferProcess.getContentDataAddress().getType()) && "KafkaBroker-PULL".equals(transferProcess.getTransferType());
     }
 
     @Override
-    public @NotNull StatusResult<DataFlowResponse> initiateFlow(TransferProcess transferProcess, Policy policy) {
+    public @NotNull StatusResult<DataFlowResponse> start(TransferProcess transferProcess, Policy policy) {
         // static credentials, in a production case these should be created dynamically and an ACLs entry should be added
         var username = "alice";
         var password = "alice-secret";
@@ -48,16 +50,27 @@ class KafkaToKafkaDataFlowController implements DataFlowController {
                 .property(EndpointDataReference.AUTH_KEY, username)
                 .property(EndpointDataReference.AUTH_CODE, password)
                 .property(EndpointDataReference.CONTRACT_ID, transferProcess.getContractId())
-                .property(EDC_NAMESPACE + KafkaDataAddressSchema.TOPIC, contentDataAddress.getStringProperty(KafkaDataAddressSchema.TOPIC))
+                .property(KafkaDataAddressSchema.TOPIC, contentDataAddress.getStringProperty(KafkaDataAddressSchema.TOPIC))
                 .build();
 
         return StatusResult.success(DataFlowResponse.Builder.newInstance().dataAddress(kafkaDataAddress).build());
     }
 
     @Override
+    public StatusResult<Void> suspend(TransferProcess transferProcess) {
+        // here the flow can be suspended, not something covered in this sample
+        return StatusResult.success();
+    }
+
+    @Override
     public StatusResult<Void> terminate(TransferProcess transferProcess) {
         // here the flow can be terminated, not something covered in this sample
         return StatusResult.success();
+    }
+
+    @Override
+    public Set<String> transferTypesFor(Asset asset) {
+        return Set.of("Kafka-PULL");
     }
 
 }

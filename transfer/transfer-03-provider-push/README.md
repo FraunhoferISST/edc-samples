@@ -24,14 +24,24 @@ If not, re-visit the [Prerequisites](../transfer-00-prerequisites/README.md)
 Running this sample consists of multiple steps, that are executed one by one and following the same
 order.
 
-### 1. Start the transfer
+### 1. Start a http server
+
+As a pre-requisite, you need to have a logging webserver that runs on port 4000 and logs all the incoming requests, the
+data will be sent to this server.
+
+```bash
+docker build -t http-request-logger util/http-request-logger
+docker run -p 4000:4000 http-request-logger
+```
+
+### 2. Start the transfer
 
 Before executing the request, modify the [request body](resources/start-transfer.json) by inserting the contract agreement ID
 from the [Negotiation](../transfer-01-negotiation/README.md) chapter. 
 You can re-use the same asset, policies and contract negotiation from before.
 
 ```bash
-curl -X POST "http://localhost:29193/management/v2/transferprocesses" \
+curl -X POST "http://localhost:29193/management/v3/transferprocesses" \
     -H "Content-Type: application/json" \
     -d @transfer/transfer-03-provider-push/resources/start-transfer.json \
     -s | jq
@@ -50,18 +60,18 @@ Sample output:
 }
 ```
 
-### 2. Check the transfer status
+### 3. Check the transfer status
 
 Due to the nature of the transfer, it will be very fast and most likely already done by the time you
 read the UUID. 
 
 ```bash
-curl http://localhost:29193/management/v2/transferprocesses/<transfer process id>
+curl http://localhost:29193/management/v3/transferprocesses/<transfer process id>
 ```
 
 Notice the transfer COMPLETED state
 
-### 3. Check the data
+### 4. Check the data
 
 At this step, you can check the data by checking the log of the http server exposed on port 4000, you should see a log
 that shows the same data that you can get from https://jsonplaceholder.typicode.com/users.

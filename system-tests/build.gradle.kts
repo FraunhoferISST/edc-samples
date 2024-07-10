@@ -18,8 +18,10 @@ plugins {
 
 dependencies {
     testImplementation(libs.edc.junit)
-    testImplementation(libs.edc.json.ld)
+    testImplementation(libs.edc.json.ld.lib)
+    testImplementation(libs.edc.json.ld.spi)
     testImplementation(libs.edc.control.plane.spi)
+    testImplementation(testFixtures(libs.edc.management.api.test.fixtures))
     testImplementation(libs.awaitility)
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(libs.restAssured)
@@ -40,6 +42,17 @@ dependencies {
     testCompileOnly(project(":transfer:streaming:streaming-02-kafka-to-http:streaming-02-runtime"))
     testCompileOnly(project(":transfer:streaming:streaming-03-kafka-broker:streaming-03-runtime"))
 
-    testCompileOnly(project(":advanced:advanced-01-open-telemetry:open-telemetry-provider"))
-    testCompileOnly(project(":advanced:advanced-01-open-telemetry:open-telemetry-consumer"))
+    testCompileOnly(project(":advanced:advanced-01-open-telemetry:open-telemetry-runtime"))
+
+    testCompileOnly(project(":policy:policy-01-policy-enforcement:policy-enforcement-provider"))
+    testCompileOnly(project(":policy:policy-01-policy-enforcement:policy-enforcement-consumer"))
+    testCompileOnly(project(":policy:policy-01-policy-enforcement:policy-functions"))
+
+    testCompileOnly(project(":policy:policy-02-provision:policy-provision-consumer"))
+    testCompileOnly(project(":policy:policy-02-provision:policy-provision-provider"))
+
+}
+
+tasks.compileJava {
+    dependsOn(":advanced:advanced-01-open-telemetry:open-telemetry-runtime:build")
 }

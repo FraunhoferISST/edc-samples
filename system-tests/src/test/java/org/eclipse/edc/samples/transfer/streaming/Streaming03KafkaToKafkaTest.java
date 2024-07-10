@@ -40,8 +40,8 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.junit.extensions.EdcRuntimeExtension;
-import org.eclipse.edc.junit.testfixtures.TestUtils;
 import org.eclipse.edc.spi.types.domain.edr.EndpointDataReference;
+import org.eclipse.edc.util.io.Ports;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,10 +69,10 @@ import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.eclipse.edc.connector.transfer.spi.types.TransferProcessStates.STARTED;
+import static org.eclipse.edc.connector.controlplane.transfer.spi.types.TransferProcessStates.STARTED;
 import static org.eclipse.edc.samples.common.FileTransferCommon.getFileContentFromRelativePath;
 import static org.eclipse.edc.samples.common.FileTransferCommon.getFileFromRelativePath;
-import static org.eclipse.edc.spi.CoreConstants.EDC_NAMESPACE;
+import static org.eclipse.edc.spi.constants.CoreConstants.EDC_NAMESPACE;
 
 @Testcontainers
 @EndToEndTest
@@ -84,19 +84,19 @@ public class Streaming03KafkaToKafkaTest {
     private static final Path SAMPLE_FOLDER = Path.of("transfer", "streaming", SAMPLE_NAME);
     private static final Path RUNTIME_PATH = SAMPLE_FOLDER.resolve(RUNTIME_NAME);
     private static final Duration TIMEOUT = Duration.ofSeconds(60);
-    private static final Participant PROVIDER = Participant.Builder.newInstance()
+    private static final StreamingParticipant PROVIDER = StreamingParticipant.Builder.newStreamingInstance()
             .name("provider")
             .id("provider")
-            .managementEndpoint(new Participant.Endpoint(URI.create("http://localhost:18181/management")))
-            .protocolEndpoint(new Participant.Endpoint(URI.create("http://localhost:18182/protocol")))
-            .controlEndpoint(new Participant.Endpoint(URI.create("http://localhost:18183/control")))
+            .managementEndpoint(new StreamingParticipant.Endpoint(URI.create("http://localhost:18181/management")))
+            .protocolEndpoint(new StreamingParticipant.Endpoint(URI.create("http://localhost:18182/protocol")))
+            .controlEndpoint(new StreamingParticipant.Endpoint(URI.create("http://localhost:18183/control")))
             .build();
-    private static final Participant CONSUMER = Participant.Builder.newInstance()
+    private static final StreamingParticipant CONSUMER = StreamingParticipant.Builder.newStreamingInstance()
             .name("consumer")
             .id("consumer")
-            .managementEndpoint(new Participant.Endpoint(URI.create("http://localhost:28181/management")))
-            .protocolEndpoint(new Participant.Endpoint(URI.create("http://localhost:28182/protocol")))
-            .controlEndpoint(new Participant.Endpoint(URI.create("http://localhost:28183/control")))
+            .managementEndpoint(new StreamingParticipant.Endpoint(URI.create("http://localhost:28181/management")))
+            .protocolEndpoint(new StreamingParticipant.Endpoint(URI.create("http://localhost:28182/protocol")))
+            .controlEndpoint(new StreamingParticipant.Endpoint(URI.create("http://localhost:28183/control")))
             .build();
     private static final String GROUP_ID = "group_id";
 
@@ -126,7 +126,7 @@ public class Streaming03KafkaToKafkaTest {
             )
     );
 
-    private final int httpReceiverPort = TestUtils.getFreePort();
+    private final int httpReceiverPort = Ports.getFreePort();
     private final MockWebServer edrReceiverServer = new MockWebServer();
 
     @BeforeEach
@@ -155,7 +155,11 @@ public class Streaming03KafkaToKafkaTest {
         var transferProcessPrivateProperties = Json.createObjectBuilder()
                 .add("receiverHttpEndpoint", "http://localhost:" + httpReceiverPort)
                 .build();
-        var transferProcessId = CONSUMER.requestAsset(PROVIDER, "kafka-stream-asset", transferProcessPrivateProperties, destination);
+        var transferProcessId = CONSUMER.requestAssetFrom("kafka-stream-asset", PROVIDER)
+                .withPrivateProperties(transferProcessPrivateProperties)
+                .withDestination(destination)
+                .withTransferType("KafkaBroker-PULL")
+                .execute();
 
         await().atMost(TIMEOUT).untilAsserted(() -> {
             var state = CONSUMER.getTransferProcessState(transferProcessId);

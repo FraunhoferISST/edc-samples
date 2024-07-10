@@ -64,21 +64,21 @@ Run this to build and launch the consumer with listener extension:
 
 ```bash
 ./gradlew transfer:transfer-04-event-consumer:consumer-with-listener:build
-java -Dedc.keystore=transfer/transfer-00-prerequisites/resources/certs/cert.pfx -Dedc.keystore.password=123456 -Dedc.vault=transfer/transfer-00-prerequisites/resources/configuration/consumer-vault.properties -Dedc.fs.config=transfer/transfer-00-prerequisites/resources/configuration/consumer-configuration.properties -jar transfer/transfer-04-event-consumer/consumer-with-listener/build/libs/connector.jar
+java -Dedc.keystore=transfer/transfer-00-prerequisites/resources/certs/cert.pfx -Dedc.keystore.password=123456 -Dedc.fs.config=transfer/transfer-00-prerequisites/resources/configuration/consumer-configuration.properties -jar transfer/transfer-04-event-consumer/consumer-with-listener/build/libs/connector.jar
 ````
 
 ### 2. Negotiate a new contract
 
 ```bash
 curl -d @transfer/transfer-01-negotiation/resources/negotiate-contract.json \
-  -X POST -H 'content-type: application/json' http://localhost:29193/management/v2/contractnegotiations \
+  -X POST -H 'content-type: application/json' http://localhost:29193/management/v3/contractnegotiations \
   -s | jq
 ```
 
 ### 3. Get the contract agreement id
 
 ```bash
-curl -X GET "http://localhost:29193/management/v2/contractnegotiations/{{contract-negotiation-id}}" \
+curl -X GET "http://localhost:29193/management/v3/contractnegotiations/{{contract-negotiation-id}}" \
     --header 'Content-Type: application/json' \
     -s | jq
 ```
@@ -89,7 +89,7 @@ Replace the `contractId` property inside the [request body](../transfer-02-consu
 Afterward run:
 
 ```bash
-curl -X POST "http://localhost:29193/management/v2/transferprocesses" \
+curl -X POST "http://localhost:29193/management/v3/transferprocesses" \
   -H "Content-Type: application/json" \
   -d @transfer/transfer-02-consumer-pull/resources/start-transfer.json \
   -s | jq
@@ -101,7 +101,7 @@ The consumer should spew out logs similar to:
 
 ```bash
 DEBUG 2023-10-16T09:29:45.316908 [TransferProcessManagerImpl] TransferProcess 762b5a0c-43fb-4b8b-8022-669043c8fa81 is now in state REQUESTED
-DEBUG 2023-10-16T09:29:46.269998 DSP: Incoming TransferStartMessage for class org.eclipse.edc.connector.transfer.spi.types.TransferProcess process: 762b5a0c-43fb-4b8b-8022-669043c8fa81
+DEBUG 2023-10-16T09:29:46.269998 DSP: Incoming TransferStartMessage for class org.eclipse.edc.connector.controlplane.transfer.spi.types.TransferProcess process: 762b5a0c-43fb-4b8b-8022-669043c8fa81
 DEBUG 2023-10-16T09:29:46.271592 TransferProcessStartedListener received STARTED event   <----------------------------
 DEBUG 2023-10-16T09:29:46.27174 TransferProcess 762b5a0c-43fb-4b8b-8022-669043c8fa81 is now in state STARTED
 ```

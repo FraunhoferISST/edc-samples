@@ -31,14 +31,14 @@ public class NegotiationCommon {
     private static final String CREATE_ASSET_FILE_PATH = "transfer/transfer-01-negotiation/resources/create-asset.json";
     private static final String V3_ASSETS_PATH = "/v3/assets";
     private static final String CREATE_POLICY_FILE_PATH = "transfer/transfer-01-negotiation/resources/create-policy.json";
-    private static final String V2_POLICY_DEFINITIONS_PATH = "/v2/policydefinitions";
+    private static final String V2_POLICY_DEFINITIONS_PATH = "/v3/policydefinitions";
     private static final String CREATE_CONTRACT_DEFINITION_FILE_PATH = "transfer/transfer-01-negotiation/resources/create-contract-definition.json";
-    private static final String V2_CONTRACT_DEFINITIONS_PATH = "/v2/contractdefinitions";
-    private static final String V2_CATALOG_DATASET_REQUEST_PATH = "/v2/catalog/dataset/request";
+    private static final String V2_CONTRACT_DEFINITIONS_PATH = "/v3/contractdefinitions";
+    private static final String V2_CATALOG_DATASET_REQUEST_PATH = "/v3/catalog/dataset/request";
     private static final String FETCH_DATASET_FROM_CATALOG_FILE_PATH = "transfer/transfer-01-negotiation/resources/get-dataset.json";
     private static final String CATALOG_DATASET_ID = "\"odrl:hasPolicy\".'@id'";
     private static final String NEGOTIATE_CONTRACT_FILE_PATH = "transfer/transfer-01-negotiation/resources/negotiate-contract.json";
-    private static final String V2_CONTRACT_NEGOTIATIONS_PATH = "/v2/contractnegotiations/";
+    private static final String V2_CONTRACT_NEGOTIATIONS_PATH = "/v3/contractnegotiations/";
     private static final String CONTRACT_NEGOTIATION_ID = "@id";
     private static final String CONTRACT_AGREEMENT_ID = "contractAgreementId";
     private static final String CONTRACT_OFFER_ID_KEY = "{{contract-offer-id}}";
@@ -78,11 +78,16 @@ public class NegotiationCommon {
     }
 
     public static String getContractAgreementId(String contractNegotiationId) {
-        String url = PrerequisitesCommon.CONSUMER_MANAGEMENT_URL + V2_CONTRACT_NEGOTIATIONS_PATH + contractNegotiationId;
+        var url = PrerequisitesCommon.CONSUMER_MANAGEMENT_URL + V2_CONTRACT_NEGOTIATIONS_PATH + contractNegotiationId;
         return await()
                 .atMost(TIMEOUT)
                 .pollInterval(POLL_INTERVAL)
                 .until(() -> get(url, CONTRACT_AGREEMENT_ID), Objects::nonNull);
+    }
+
+    public static String getContractNegotiationState(String contractNegotiationId) {
+        var url = PrerequisitesCommon.CONSUMER_MANAGEMENT_URL + V2_CONTRACT_NEGOTIATIONS_PATH + contractNegotiationId;
+        return get(url, "state");
     }
 
     public static String runNegotiation() {
