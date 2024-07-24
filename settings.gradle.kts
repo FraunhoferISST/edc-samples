@@ -32,6 +32,9 @@ include(":basic:basic-01-basic-connector")
 include(":basic:basic-02-health-endpoint")
 include(":basic:basic-03-configuration")
 
+include(":fc:refresh-catalog")
+include(":fc:fc-connector")
+
 include(":transfer:transfer-00-prerequisites:connector")
 
 include(":transfer:transfer-04-event-consumer:consumer-with-listener")
