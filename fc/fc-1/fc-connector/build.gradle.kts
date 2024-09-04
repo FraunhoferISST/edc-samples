@@ -19,7 +19,7 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(project(":fc:refresh-catalog"))
+    runtimeOnly(project(":fc:fc-1:refresh-catalog"))
 
     implementation(libs.edc.connector.core)
     implementation(libs.edc.control.plane.core)
