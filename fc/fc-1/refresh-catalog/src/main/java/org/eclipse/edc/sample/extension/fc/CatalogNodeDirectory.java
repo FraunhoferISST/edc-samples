@@ -20,7 +20,7 @@ public class CatalogNodeDirectory implements TargetNodeDirectory {
 
     public List<TargetNode> readNodesFromJson() {
         try {
-            List<TargetNode> nodes = objectMapper.readValue(new File("fc/refresh-catalog/catalog-node-directory.json"), new TypeReference<List<TargetNode>>(){});
+            List<TargetNode> nodes = objectMapper.readValue(new File("fc/fc-1/refresh-catalog/catalog-node-directory.json"), new TypeReference<List<TargetNode>>(){});
             return nodes;
         } catch (IOException e) {
             throw new RuntimeException(e);

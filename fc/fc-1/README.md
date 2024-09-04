@@ -1,6 +1,6 @@
 ## build jar
 ```shell
-./gradlew clean fc:fc-connector:build
+./gradlew clean fc:fc-1:fc-connector:build
 ```
 
 
@@ -40,7 +40,7 @@ curl -d @fc/fc-1/fc-connector/connector1/resources/create-contract-definition.js
 ## Connector 3
 #### run connector
 ```shell
-java -Dedc.fs.config=fc/fc-connector/connector3/config.properties -jar fc/fc-1/fc-connector/build/libs/connector3.jar
+java -Dedc.fs.config=fc/fc-1/fc-connector/connector3/config.properties -jar fc/fc-1/fc-connector/build/libs/connector3.jar
 ```
 
 #### Create asset
