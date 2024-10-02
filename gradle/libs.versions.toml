@@ -70,6 +70,8 @@ testcontainers-minio = { module = "org.testcontainers:minio", version.ref = "tes
 testcontainers-hashicorp-vault = { module = "org.testcontainers:vault", version.ref = "testcontainers" }
 azure-storage-blob = { module = "com.azure:azure-storage-blob", version = "12.28.0" }
 minio-io = { module = "io.minio:minio", version = "8.5.12" }
+edc-data-plane-util = { module = "org.eclipse.edc:data-plane-util", version.ref = "edc" }
+edc-provision-aws-s3 = { module = "org.eclipse.edc.aws:provision-aws-s3", version.ref = "edc" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }

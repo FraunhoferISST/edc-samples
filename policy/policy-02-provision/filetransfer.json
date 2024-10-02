@@ -7,9 +7,17 @@
   "assetId": "test-document",
   "contractId": "{{contract-agreement-id}}",
   "dataDestination": {
-    "type": "File"
+    "type": "AmazonS3",
+    "properties": {
+      "region": "us-east-1",
+      "bucketName": "provider",
+      "keyName": "test-document.txt",
+      "endpointOverride": "http://localhost:9000",
+      "accessKeyId": "admin",
+      "secretAccessKey": "password"
+    }
   },
-  "transferType": "File-PUSH",
+  "transferType": "S3-PUSH",
   "managedResources": true,
   "counterPartyAddress": "http://localhost:8282/protocol",
   "connectorId": "consumer"

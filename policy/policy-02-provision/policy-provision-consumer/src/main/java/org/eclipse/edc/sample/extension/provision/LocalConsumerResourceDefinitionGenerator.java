@@ -17,6 +17,7 @@ package org.eclipse.edc.sample.extension.provision;
 import org.eclipse.edc.connector.controlplane.transfer.spi.provision.ConsumerResourceDefinitionGenerator;
 import org.eclipse.edc.connector.controlplane.transfer.spi.types.ResourceDefinition;
 import org.eclipse.edc.connector.controlplane.transfer.spi.types.TransferProcess;
+import org.eclipse.edc.connector.provision.aws.s3.S3BucketResourceDefinition;
 import org.eclipse.edc.policy.model.Policy;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,20 +27,17 @@ import static java.util.UUID.randomUUID;
 
 public class LocalConsumerResourceDefinitionGenerator implements ConsumerResourceDefinitionGenerator {
 
-    private static final String TYPE = "File";
-    /**
-     * This will get modified during the policy evaluation to notice the change, keep the path different from the path used in policy
-     */
-    private static final String DESTINATION = "any path";
+    private static final String TYPE = "AmazonS3";
 
     @Override
     public @Nullable ResourceDefinition generate(TransferProcess transferProcess, Policy policy) {
         Objects.requireNonNull(transferProcess, "transferProcess must always be provided");
         Objects.requireNonNull(policy, "policy must always be provided");
 
-        return LocalResourceDefinition.Builder.newInstance()
+        return S3BucketResourceDefinition.Builder.newInstance()
                 .id(randomUUID().toString())
-                .pathName(DESTINATION)
+                .bucketName("provider")
+                .regionId("us-east-1")
                 .build();
     }
 
