@@ -14,110 +14,38 @@
 
 package org.eclipse.edc.sample.extension.policy;
 
-import org.eclipse.edc.connector.controlplane.asset.spi.domain.Asset;
+import org.eclipse.edc.connector.controlplane.asset.spi.index.AssetIndex;
 import org.eclipse.edc.connector.controlplane.contract.spi.offer.store.ContractDefinitionStore;
-import org.eclipse.edc.connector.controlplane.contract.spi.types.offer.ContractDefinition;
-import org.eclipse.edc.connector.controlplane.policy.spi.PolicyDefinition;
 import org.eclipse.edc.connector.controlplane.policy.spi.store.PolicyDefinitionStore;
-import org.eclipse.edc.policy.engine.spi.RuleBindingRegistry;
-import org.eclipse.edc.policy.model.Action;
-import org.eclipse.edc.policy.model.AtomicConstraint;
-import org.eclipse.edc.policy.model.LiteralExpression;
-import org.eclipse.edc.policy.model.Operator;
-import org.eclipse.edc.policy.model.Permission;
-import org.eclipse.edc.policy.model.Policy;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
-import org.eclipse.edc.spi.query.Criterion;
+import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 
-import java.util.List;
-
-import static org.eclipse.edc.policy.engine.spi.PolicyEngine.ALL_SCOPES;
-
-@Extension(value = PolicyFunctionsExtension.NAME)
+@Extension("MinIO S3-Based Transfer")
 public class PolicyFunctionsExtension implements ServiceExtension {
-    private static final String FILE_PATH = "edc.samples.policy-02.constraint.desired.file.path";
-    private static final String KEY = "POLICY_REGULATE_FILE_PATH";
-    public static final String NAME = "Policy Functions Extension";
-    public static final String POLICY_TYPE = "USE";
-    public static final String RIGHT_OPERAND = "test-document";
-    public static final String DEFAULT_FILE_PATH = "/tmp/desired/path/transfer.txt";
 
     @Inject
-    private RuleBindingRegistry ruleBindingRegistry;
+    private AssetIndex assetIndex;
     @Inject
-    private PolicyDefinitionStore policyStore;
+    private PolicyDefinitionStore policyDefinitionStore;
     @Inject
     private ContractDefinitionStore contractDefinitionStore;
+    @Inject
+    private Monitor monitor;
 
     @Override
     public String name() {
-        return NAME;
+        return "MinIO-Based Transfer";
     }
 
     @Override
     public void initialize(ServiceExtensionContext context) {
-        ruleBindingRegistry.bind(POLICY_TYPE, ALL_SCOPES);
+        monitor.info("PolicyFunctionsExtension initialized.");
 
-        registerContractDefinition(context);
-    }
-
-    private PolicyDefinition createAccessPolicy() {
-        var usePermission = Permission.Builder.newInstance()
-                .action(Action.Builder.newInstance().type("USE").build())
-                .build();
-
-        return PolicyDefinition.Builder.newInstance()
-                .id("use")
-                .policy(Policy.Builder.newInstance()
-                        .permission(usePermission)
-                        .build())
-                .build();
-    }
-
-    private PolicyDefinition createContractPolicy(ServiceExtensionContext context) {
-        var desiredFilePath = context.getSetting(FILE_PATH, DEFAULT_FILE_PATH);
-        var regulateFilePathConstraint = AtomicConstraint.Builder.newInstance()
-                .leftExpression(new LiteralExpression(KEY))
-                .operator(Operator.EQ)
-                .rightExpression(new LiteralExpression(desiredFilePath))
-                .build();
-
-
-        var permission = Permission.Builder.newInstance()
-                .action(Action.Builder.newInstance().type(POLICY_TYPE).build())
-                .constraint(regulateFilePathConstraint)
-                .build();
-
-
-        return PolicyDefinition.Builder.newInstance()
-                .id("use-regulated-path")
-                .policy(Policy.Builder.newInstance()
-                        .permission(permission)
-                        .build())
-                .build();
-    }
-
-    private void registerContractDefinition(ServiceExtensionContext context) {
-        var accessPolicy = createAccessPolicy();
-        policyStore.create(accessPolicy);
-
-        var contractPolicy = createContractPolicy(context);
-        policyStore.create(contractPolicy);
-
-        var contractDefinition = ContractDefinition.Builder.newInstance()
-                .id("1")
-                .accessPolicyId(accessPolicy.getId())
-                .contractPolicyId(contractPolicy.getId())
-                .assetsSelector(List.of(Criterion.Builder.newInstance()
-                        .operandLeft(Asset.PROPERTY_ID)
-                        .operator("=") // TODO changed to EQ?
-                        .operandRight(RIGHT_OPERAND)
-                        .build()))
-                .build();
-        contractDefinitionStore.save(contractDefinition);
     }
 
 }
+
+
