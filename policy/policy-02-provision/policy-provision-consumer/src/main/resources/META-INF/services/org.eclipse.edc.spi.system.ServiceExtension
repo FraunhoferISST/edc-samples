@@ -12,5 +12,5 @@
 #
 #
 
-org.eclipse.edc.sample.extension.provision.LocalProvisionExtension
+#org.eclipse.edc.sample.extension.provision.LocalProvisionExtension
 org.eclipse.edc.sample.extension.policy.ConsumerPolicyFunctionsExtension

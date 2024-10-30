@@ -15,11 +15,11 @@
 package org.eclipse.edc.sample.extension.policy;
 
 import org.eclipse.edc.connector.controlplane.transfer.spi.provision.ResourceManifestContext;
+import org.eclipse.edc.connector.provision.aws.s3.S3BucketResourceDefinition;
 import org.eclipse.edc.policy.engine.spi.AtomicConstraintFunction;
 import org.eclipse.edc.policy.engine.spi.PolicyContext;
 import org.eclipse.edc.policy.model.Operator;
 import org.eclipse.edc.policy.model.Permission;
-import org.eclipse.edc.sample.extension.provision.LocalResourceDefinition;
 import org.eclipse.edc.spi.monitor.Monitor;
 
 import java.util.Objects;
@@ -33,13 +33,18 @@ public class RegulateFilePathFunction implements AtomicConstraintFunction<Permis
 
     @Override
     public boolean evaluate(Operator operator, Object rightValue, Permission rule, PolicyContext context) {
-        var desiredFilePath = (String) rightValue;
+        var desiredRegion = (String) rightValue;
 
         if (Objects.requireNonNull(operator) == Operator.EQ) {
             var manifestContext = context.getContextData(ResourceManifestContext.class);
+
             manifestContext.getDefinitions().stream()
-                    .filter(definition -> definition.getClass().equals(LocalResourceDefinition.class))
-                    .forEach(definition -> ((LocalResourceDefinition) definition).updatePathName(desiredFilePath));
+                    .filter(S3BucketResourceDefinition.class::isInstance)
+                    .map(S3BucketResourceDefinition.class::cast)
+                    .forEach(definition -> {
+                        definition.toBuilder().regionId(desiredRegion).build();
+                    });
+
             return true;
         }
 

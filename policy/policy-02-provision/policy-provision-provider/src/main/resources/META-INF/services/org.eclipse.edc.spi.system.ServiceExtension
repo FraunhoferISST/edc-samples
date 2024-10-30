@@ -13,4 +13,4 @@
 #
 
 org.eclipse.edc.sample.extension.policy.PolicyFunctionsExtension
-org.eclipse.edc.sample.extension.transfer.FileTransferExtension
+#org.eclipse.edc.sample.extension.transfer.FileTransferExtension
