@@ -1,0 +1,20 @@
+{
+  "@context": {
+    "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+  },
+  "@type": "ContractRequest",
+  "counterPartyAddress": "http://localhost:8282/protocol",
+  "protocol": "dataspace-protocol-http",
+  "policy": {
+    "@context": "http://www.w3.org/ns/odrl.jsonld",
+    "@id": "{{contract-offer-id}}",
+    "@type": "odrl:Offer",
+    "assigner": "provider",
+    "target": "test-document",
+    "odrl:permission": {
+      "odrl:action": {
+        "odrl:type": "USE"
+      }
+    }
+  }
+}

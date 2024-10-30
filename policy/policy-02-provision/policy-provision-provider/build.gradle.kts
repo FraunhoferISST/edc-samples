@@ -29,7 +29,7 @@ dependencies {
     implementation(libs.edc.transfer.data.plane.signaling)
     implementation(libs.edc.transfer.pull.http.receiver)
     implementation(libs.edc.validator.data.address.http.data)
-    implementation(libs.edc.api.control.configuration)
+    implementation(libs.edc.control.api.configuration)
 
     implementation(libs.edc.edr.cache.api)
     implementation(libs.edc.edr.store.core)
@@ -40,12 +40,12 @@ dependencies {
     implementation(libs.edc.data.plane.util)
 
     implementation(libs.edc.data.plane.self.registration)
-    implementation(libs.edc.data.plane.control.api)
+    implementation(libs.edc.data.plane.signaling.api)
     implementation(libs.edc.data.plane.public.api)
     implementation(libs.edc.data.plane.core)
     implementation(libs.edc.data.plane.http)
-
-    //implementation(project(":transfer:transfer-01-file-transfer:transfer-file-local"))
+    implementation(libs.edc.data.plane.aws.s3)
+    implementation(libs.edc.http)
 }
 
 application {
