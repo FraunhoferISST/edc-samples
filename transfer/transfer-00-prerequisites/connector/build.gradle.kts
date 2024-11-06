@@ -19,6 +19,8 @@ plugins {
 }
 
 dependencies {
+    runtimeOnly(project(":transfer:fc:fc-1:refresh-catalog"))
+
     implementation(libs.edc.control.api.configuration)
     implementation(libs.edc.control.plane.api.client)
     implementation(libs.edc.control.plane.api)
