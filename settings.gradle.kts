@@ -59,9 +59,7 @@ include(":policy:policy-02-provision:policy-provision")
 include(":policy:policy-02-provision:policy-provision-consumer")
 include(":policy:policy-02-provision:policy-provision-provider")
 
-
-//policy
-
+include(":policy:policy-02-provision:provision-aws-s3")
 include(":policy:policy-02-provision:policy-provision-consumer")
 include(":policy:policy-02-provision:policy-provision-provider")
 
