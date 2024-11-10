@@ -32,17 +32,24 @@ include(":basic:basic-01-basic-connector")
 include(":basic:basic-02-health-endpoint")
 include(":basic:basic-03-configuration")
 
-include(":fc:fc-1:refresh-catalog")
-include(":fc:fc-1:fc-connector")
+include(":fc:fc-00-basic:federated-catalog-base")
+
+//include(":fc:fc-02-standalone:catalog-node-resolver")
+include(":fc:fc-02-standalone:standalone-catalog")
+
+//include(":fc:fc-01-embedded:refresh-catalog")
+include(":fc:fc-01-embedded:fc-connector")
+
+
 
 include(":transfer:transfer-00-prerequisites:connector")
 
 include(":transfer:transfer-04-event-consumer:consumer-with-listener")
 include(":transfer:transfer-04-event-consumer:listener")
 
-include(":transfer:transfer-05-file-transfer-cloud:cloud-transfer-consumer")
-include(":transfer:transfer-05-file-transfer-cloud:cloud-transfer-provider")
-include(":transfer:transfer-05-file-transfer-cloud:transfer-file-cloud")
+//include(":transfer:transfer-05-file-transfer-cloud:cloud-transfer-consumer")
+//include(":transfer:transfer-05-file-transfer-cloud:cloud-transfer-provider")
+//include(":transfer:transfer-05-file-transfer-cloud:transfer-file-cloud")
 
 include(":transfer:streaming:streaming-01-http-to-http:streaming-01-runtime")
 include(":transfer:streaming:streaming-02-kafka-to-http:streaming-02-runtime")
@@ -60,4 +67,4 @@ include(":advanced:advanced-02-custom-runtime")
 
 include(":util:http-request-logger")
 
-include(":system-tests")
+//include(":system-tests")

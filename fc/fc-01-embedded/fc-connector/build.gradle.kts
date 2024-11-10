@@ -19,7 +19,7 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(project(":fc:fc-1:refresh-catalog"))
+    runtimeOnly(project(":fc:fc-00-basic:federated-catalog-base"))
 
     implementation(libs.edc.connector.core)
     implementation(libs.edc.control.plane.core)
@@ -29,17 +29,17 @@ dependencies {
     implementation(libs.edc.iam.mock)
     implementation(libs.edc.http)
 
-
-    // Federated catalog
-//    runtimeOnly(libs.fc.core)
-//    runtimeOnly(libs.fc.ext.api)
 }
 
 application {
     mainClass.set("org.eclipse.edc.boot.system.runtime.BaseRuntime")
 }
 
+var distTar = tasks.getByName("distTar")
+var distZip = tasks.getByName("distZip")
+
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     mergeServiceFiles()
-    archiveFileName.set("connector3.jar")
+    archiveFileName.set("fc-connector.jar")
+    dependsOn(distTar, distZip)
 }
