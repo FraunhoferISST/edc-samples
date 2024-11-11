@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2020, 2021 Microsoft Corporation
+ *  Copyright (c) 2024 Fraunhofer Institute for Software and Systems Engineering
  *
  *  This program and the accompanying materials are made available under the
  *  terms of the Apache License, Version 2.0 which is available at
@@ -8,7 +8,7 @@
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Contributors:
- *       Fraunhofer Institute for Software and Systems Engineering - added dependencies
+ *       Fraunhofer Institute for Software and Systems Engineering - initial API and implementation
  *
  */
 
@@ -20,31 +20,27 @@ plugins {
 
 dependencies {
 //    runtimeOnly(project(":fc:fc-00-basic:federated-catalog-base"))
-    runtimeOnly(project(":fc:fc-embedded-old:refresh-catalog"))
 
-
-//    all the necessary modules for runtime
     implementation(libs.edc.connector.core)
-    runtimeOnly(libs.edc.boot)
-    runtimeOnly(libs.edc.control.plane.core)
+    implementation(libs.edc.control.plane.core)
     implementation(libs.edc.configuration.filesystem)
-    runtimeOnly(libs.edc.token.core)
-    implementation(libs.edc.http)
-    runtimeOnly(libs.edc.dsp)
-
+    implementation(libs.edc.management.api)
+    implementation(libs.edc.dsp)
     implementation(libs.edc.iam.mock)
+    implementation(libs.edc.http)
+    implementation(libs.edc.edr.store.core)
 
+
+    // Federated catalog
+//    runtimeOnly(libs.fc.core)
+//    runtimeOnly(libs.fc.ext.api)
 }
 
 application {
     mainClass.set("org.eclipse.edc.boot.system.runtime.BaseRuntime")
 }
 
-var distTar = tasks.getByName("distTar")
-var distZip = tasks.getByName("distZip")
-
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     mergeServiceFiles()
-    archiveFileName.set("standalone-catalog.jar")
-    dependsOn(distTar, distZip)
+    archiveFileName.set("rg-connector.jar")
 }
