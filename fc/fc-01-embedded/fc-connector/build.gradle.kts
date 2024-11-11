@@ -29,6 +29,10 @@ dependencies {
     implementation(libs.edc.iam.mock)
     implementation(libs.edc.http)
 
+    //implementation(libs.edc.edr.cache.api)
+    implementation(libs.edc.edr.store.core)
+    //implementation(libs.edc.edr.store.receiver)
+
 }
 
 application {
