@@ -48,11 +48,11 @@ If the execution is successful, then the Catalog API of our connector will liste
 
 [//]: # (INFO 2024-11-10T19:36:02.150032714 Runtime 2ec743c7-b39c-45b9-9e13-e750cf89d102 ready)
 If you observe the logs, you can see the following two recurring line,
-```
-DEBUG 2024-11-10T19:36:07.133919175 [ExecutionManager] Run pre-execution task
-DEBUG 2024-11-10T19:36:07.137216546 [ExecutionManager] No WorkItems found, skipping execution
-...
-```
+
+> DEBUG 2024-11-10T19:36:07.133919175 [ExecutionManager] Run pre-execution task
+>
+> DEBUG 2024-11-10T19:36:07.137216546 [ExecutionManager] No WorkItems found, skipping execution
+
 This means our FC crawler is running, and the crawler did not find any WorkItem 
 as we do not have any node directory.
 
