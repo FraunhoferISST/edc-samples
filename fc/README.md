@@ -28,14 +28,14 @@ The following samples shows how to
 ### [FC sample 01](./fc-01-embedded/README.md): Implement a federated catalog embedded in a connector
 
 
-### [FC sample 02](): Implement a standalone federated catalog
+### [FC sample 02](./fc-02-standalone/README.md): Implement a standalone federated catalog
 
-### [FC sample 03](fc-03-resolve-node-directory/README.md): Extend TargetNodeDirectory
+### [FC sample 03](./fc-03-resolve-node-directory/README.md): Extend TargetNodeDirectory
 In this sample you will learn how to customise a TargetNodeDirectory depending on different use cases.
 
-#### [FC sample 03.01](fc-03-resolve-node-directory/README.md): Resolve node directories from participants' DSP endpoints
+#### [FC sample 03.01](./fc-03-resolve-node-directory/README.md): Resolve node directories from participants' DSP endpoints
 
-#### [FC sample 03.02](fc-03-resolve-node-directory/README.md): Resolve node directories from participants' DIDs
+#### [FC sample 03.02](): Resolve node directories from participants' DIDs
 
 
 
