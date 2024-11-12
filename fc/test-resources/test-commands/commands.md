@@ -1,6 +1,6 @@
 ## build jar
 ```shell
-./gradlew clean fc:test-resources:regular-connector:build
+./gradlew fc:test-resources:regular-connector:build
 ```
 
 

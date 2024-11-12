@@ -19,18 +19,10 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(project(":fc:fc-00-basic:federated-catalog-base"))
+//    runtimeOnly(project(":fc:fc-00-basic:federated-catalog-base"))
+    runtimeOnly(project(":fc:fc-02-standalone:standalone-catalog"))
+    runtimeOnly(project(":fc:fc-03-resolve-node-directory:dsp-endpoint-node-resolver"))
 
-//    all the necessary modules for runtime
-    implementation(libs.edc.connector.core)
-    runtimeOnly(libs.edc.boot)
-    runtimeOnly(libs.edc.control.plane.core)
-    implementation(libs.edc.configuration.filesystem)
-    runtimeOnly(libs.edc.token.core)
-    implementation(libs.edc.http)
-    runtimeOnly(libs.edc.dsp)
-
-    implementation(libs.edc.iam.mock)
 
 }
 
@@ -43,6 +35,6 @@ var distZip = tasks.getByName("distZip")
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     mergeServiceFiles()
-    archiveFileName.set("standalone-catalog.jar")
+    archiveFileName.set("standalone-fc-with-node-resolver.jar")
     dependsOn(distTar, distZip)
 }
