@@ -19,11 +19,8 @@ plugins {
 }
 
 dependencies {
-//    runtimeOnly(project(":fc:fc-00-basic:federated-catalog-base"))
     runtimeOnly(project(":fc:fc-02-standalone:standalone-catalog"))
     runtimeOnly(project(":fc:fc-03-resolve-node-directory:dsp-endpoint-node-resolver"))
-
-
 }
 
 application {

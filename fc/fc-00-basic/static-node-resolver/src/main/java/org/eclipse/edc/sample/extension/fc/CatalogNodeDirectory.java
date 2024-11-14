@@ -33,8 +33,8 @@ public class CatalogNodeDirectory implements TargetNodeDirectory {
 
     public List<TargetNode> readNodesFromJson() {
         try {
-            List<TargetNode> nodes = objectMapper.readValue(new File("fc/fc-03-resolve-node-directory/dsp-endpoint-node-resolver/catalog-node-directory.json"), new TypeReference<List<TargetNode>>(){});
-            return nodes;
+            String participant_directory = "fc/fc-00-basic/static-node-resolver/catalog-node-directory.json";
+            return objectMapper.readValue(new File(participant_directory), new TypeReference<List<TargetNode>>(){});
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -43,8 +43,7 @@ public class CatalogNodeDirectory implements TargetNodeDirectory {
 
     @Override
     public List<TargetNode> getAll() {
-        List<TargetNode> nodes = readNodesFromJson();
-        return nodes;
+        return readNodesFromJson();
     }
 
     @Override
