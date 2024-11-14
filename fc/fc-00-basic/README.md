@@ -14,13 +14,22 @@ For this purpose, we will be covering the following in this scope.
 The [federated-catalog-base](../../fc/fc-00-basic/federated-catalog-base) will be used as a foundational module in our upcoming samples to trigger the FC.
 It provides a [build.gradle.kts](./federated-catalog-base/build.gradle.kts) file that includes only the dependencies
 essential for FC, without any additional functionality.
+```shell
+...
+dependencies {
+    implementation(libs.edc.fc.spi.crawler)
+    runtimeOnly(libs.fc.core)
+    runtimeOnly(libs.fc.ext.api)
+}
+...
+```
 Any further dependencies will be added in the later samples based on their use cases.
 
 
 ### static-node-resolver
 The Federated Catalog requires a list of Target Catalog Nodes (TCN), which are essentially the DSP endpoints of the dataspace participants.
 The catalog crawler then crawls these listed endpoints to collect their offered catalogs. 
-This list of TCNs is resolved by the Catalog Node Resolver.
+This list of TCNs is resolved by a Catalog Node Resolver which implements the [TargetNodeDirectory](https://github.com/eclipse-edc/FederatedCatalog/blob/main/spi/crawler-spi/src/main/java/org/eclipse/edc/crawler/spi/TargetNodeDirectory.java).
 Check out [eclipse-edc/FederatedCatalog](https://github.com/eclipse-edc/FederatedCatalog/tree/main) for further information on this topic.
 
 
@@ -39,9 +48,12 @@ When the federated catalog boots up, the crawler begins periodically invoking th
 Catalog Node Resolver and collecting the catalogs offered by these nodes. To test whether our federated catalogs 
 (which we will build in later samples: [fc-01-embedded](../../fc/fc-01-embedded) and [fc-02-standalone](../../fc/fc-02-standalone)) can successfully request and retrieve these catalogs, we need at least one connector with a contract offer.
 
-Therefore, in this section, we will start a connector and then create an asset, a policy, and a contract for this connector. We will use the resources from the [transfer](../../transfer) sample to set up this connector. In the rest of this sample we will,
-* run a connector
-* create an asset
+Therefore, in this section, we will start a connector and then create an asset, a policy, 
+and a contract for this connector. In the future samples, we will refer to it as `participant-connector`.
+This `participant-connector` will function as provider.
+We will use the resources from the [transfer](../../transfer) sample to set up this connector. In the rest of this section we will,
+* run the `participant-connector`
+* create an asset this `participant-connector`
 * create a policy
 * create a contract offer
 

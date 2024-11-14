@@ -21,8 +21,8 @@ plugins {
 dependencies {
 //    comment out these dependencies and just use standalone-catalog
     implementation(libs.edc.fc.spi.crawler)
-    runtimeOnly(libs.fc.core)
-    runtimeOnly(libs.fc.ext.api)
+//    runtimeOnly(libs.fc.core)
+//    runtimeOnly(libs.fc.ext.api)
 
 }
 
