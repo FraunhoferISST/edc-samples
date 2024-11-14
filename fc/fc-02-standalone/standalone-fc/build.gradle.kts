@@ -44,6 +44,6 @@ var distZip = tasks.getByName("distZip")
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     mergeServiceFiles()
-    archiveFileName.set("standalone-catalog.jar")
+    archiveFileName.set("standalone-fc.jar")
     dependsOn(distTar, distZip)
 }

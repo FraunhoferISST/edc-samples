@@ -1,34 +1,103 @@
 # Standalone Federated Catalog
 
-This sample demonstrates how we can implement a standalone federated catalog.
 
+In this sample we focus on the implementation of a standalone federated catalog.
+Similar to the previous sample [fc-01-embedded](../fc-01-embedded) the [standalone-fc](./standalone-fc) also builds on the 
+functionalities of the federated catalog. However, unlike the previous one, it does not include the additional features needed for a connector.
 
 This sample will go through:
 
 * Implementation of a standalone FC
-* Building the standalone FC
-* Running standalone FC
+* Start the standalone FC
+* Test catalog API endpoint of the standalone FC
 
-## Run the sample
-### 1. Implementation 
 
-Something on Implementation and config properties
+### 1. Implementation a standalone FC
+The [build.gradle.kts](../../fc/fc-02-standalone/standalone-fc/build.gradle.kts) file located in the [fc-02-standalone/standalone-fc](./standalone-fc)
+directory includes all the necessary dependencies for creating a federated catalog. This includes the `fc-00-basic:federated-catalog-base`,
+and `fc-00-basic:federated-catalog-base` to enable the Catalog Node Resolver.
 
-### 2. Build 
+```kotlin
+dependencies {
+    runtimeOnly(project(":fc:fc-00-basic:federated-catalog-base"))
+    runtimeOnly(project(":fc:fc-00-basic:static-node-resolver"))
+}
+```
 
-Execute this command in project root to build the fc-connector JAR file:
+Since we are using `fc-00-basic:federated-catalog-base` as our Catalog Node Resolver here as well, it will return only 
+a single target catalog node; the `participant-connector` that we had set up before. 
+Querying the catalog API will therefore yield just one catalog, which is the contract offered by this connector.
+
+The [config.properties](./standalone-fc/config.properties) file contains the necessary configurations, 
+like the `web.http.catalog.path`, which is the catalog API endpoint of this standalone FC.
+
+```properties
+web.http.catalog.path=/catalog
+web.http.catalog.port=19195
+```
+
+### 2. Start the fc-connector
+#### Build the fc-connector JAR
+Execute this command in project root to build the `standalone-fc` JAR file:
 
 ```bash
-./gradlew fc:fc-02-standalone:standalone-catalog:build
+./gradlew fc:fc-02-standalone:standalone-fc:build
 ```
 
 
-### 3. Run 
+#### Run the fc-connector
 
-To run the connector, execute the following command
+To run the federated catalog, execute the following command
 
 ```shell
-java -Dedc.fs.config=fc/fc-02-standalone/standalone-catalog/config.properties -jar fc/fc-02-standalone/standalone-catalog/build/libs/standalone-catalog.jar
+java -Dedc.fs.config=fc/fc-02-standalone/standalone-fc/config.properties -jar fc/fc-02-standalone/standalone-fc/build/libs/standalone-fc.jar
 ```
 
-If the execution is successful, then the Catalog API will listen on the port a`29195`.
+If the execution is successful, then the Catalog API of our standalone FC will listen on port `29195`.
+
+
+
+## Test catalog query API
+Before requesting the catalog API, make sure the `partcipant-connector` that we have set up in the 
+[fc-00-basic](../../fc/fc-00-basic) is running, and it has a contract offer.
+
+To get the combined set of catalogs, use the following request:
+
+```http request
+curl -d @fc/fc-01-embedded/resources/empty-query.json \
+  -H 'content-type: application/json' http://localhost:29195/api/catalog/v1alpha/catalog/query \
+  -s | jq
+```
+
+Sample output:
+```json
+[
+  {
+    "@id": "a8a8cd64-269d-485c-8857-74d08b13ae3c",
+    "@type": "dcat:Catalog",
+    "dcat:dataset": {
+      "@id": "assetId",
+      "@type": "dcat:Dataset",
+      "odrl:hasPolicy": {
+        "@id": "MQ==:YXNzZXRJZA==:MjJmNDlhYTAtM2I3YS00ODkzLTkwZDctNTU5MTZhNmViOWJk",
+        ...
+      },
+      "dcat:distribution": [
+        ...
+      ],
+      "name": "product description",
+      "id": "assetId",
+      "contenttype": "application/json"
+    },
+    "dcat:distribution": [],
+    "dcat:service": {
+      
+    },
+    "dspace:participantId": "provider",
+    "originator": "http://localhost:19194/protocol",
+    "@context": {
+      ...
+    }
+  }
+]
+```

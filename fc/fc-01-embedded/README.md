@@ -14,7 +14,7 @@ This sample will go through:
 * Start the `fc-connector`
 * Test catalog API endpoint of the `fc-connector`
 
-## Run the sample
+
 ### 1. Implementation the fc-connector
 The [build.gradle.kts](../../fc/fc-01-embedded/fc-connector/build.gradle.kts) file located in the [fc-01-embedded/fc-connector](../fc-01-embedded/fc-connector) 
 directory includes all the necessary dependencies for creating a connector, along with the `fc-00-basic:federated-catalog-base` 
@@ -79,7 +79,7 @@ This means our FC crawler is running, and the crawler found one node, which is t
 
 
 
-## Test catalog query API
+### 3. Test catalog query API
 
 To get the catalogs from the fc-connector side, we can now call the catalog API of our embedded federated catalog. 
 This single query will retrieve a consolidated list of catalogs, instead of querying each participant endpoints individually. 
