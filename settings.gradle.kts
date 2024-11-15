@@ -37,8 +37,9 @@ include(":fc:fc-00-basic:federated-catalog-base")
 include(":fc:fc-00-basic:static-node-resolver")
 include(":fc:fc-01-embedded:fc-connector")
 include(":fc:fc-02-standalone:standalone-fc")
-include(":fc:fc-03-resolve-node-directory:dsp-endpoint-node-resolver")
-include(":fc:fc-03-resolve-node-directory:standalone-fc-with-node-resolver")
+include(":fc:fc-03-static-node-directory:target-node-resolver")
+include(":fc:fc-03-static-node-directory:standalone-fc-with-node-resolver")
+//include(":fc:fc-03-static-node-directory:embedded-fc-with-node-resolver")
 include(":fc:test-resources:regular-connector")
 
 

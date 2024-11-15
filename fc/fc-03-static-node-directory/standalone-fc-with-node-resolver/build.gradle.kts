@@ -20,7 +20,7 @@ plugins {
 
 dependencies {
     runtimeOnly(project(":fc:fc-02-standalone:standalone-fc"))
-    runtimeOnly(project(":fc:fc-03-resolve-node-directory:dsp-endpoint-node-resolver"))
+    runtimeOnly(project(":fc:fc-03-static-node-directory:target-node-resolver"))
 }
 
 application {

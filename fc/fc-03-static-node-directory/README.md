@@ -11,7 +11,7 @@
 Execute this command in project root to build the JAR file:
 
 ```bash
-./gradlew fc:fc-03-resolve-node-directory:standalone-fc-with-node-resolver:build
+./gradlew fc:fc-03-static-node-directory:standalone-fc-with-node-resolver:build
 ```
 
 
@@ -20,7 +20,7 @@ Execute this command in project root to build the JAR file:
 To run the connector, execute the following command
 
 ```shell
-java -Dedc.fs.config=fc/fc-02-standalone/standalone-catalog/config.properties -jar fc/fc-03-resolve-node-directory/standalone-fc-with-node-resolver/build/libs/standalone-fc-with-node-resolver.jar
+java -Dedc.fs.config=fc/fc-02-standalone/standalone-fc/config.properties -jar fc/fc-03-static-node-directory/standalone-fc-with-node-resolver/build/libs/standalone-fc-with-node-resolver.jar
 ```
 
 If the execution is successful, then the Catalog API will listen on the port `29195`.

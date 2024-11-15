@@ -26,25 +26,21 @@ import java.util.List;
 public class CatalogNodeDirectory implements TargetNodeDirectory {
 
     private final ObjectMapper objectMapper;
+    private final File participantListFile;
 
-    public CatalogNodeDirectory() {
+    public CatalogNodeDirectory(File participantListFile) {
         this.objectMapper = new ObjectMapper();
-    }
-
-    public List<TargetNode> readNodesFromJson() {
-        try {
-            List<TargetNode> nodes = objectMapper.readValue(new File("fc/fc-03-resolve-node-directory/dsp-endpoint-node-resolver/catalog-node-directory.json"), new TypeReference<List<TargetNode>>(){});
-            return nodes;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        this.participantListFile = participantListFile;
     }
 
 
     @Override
     public List<TargetNode> getAll() {
-        List<TargetNode> nodes = readNodesFromJson();
-        return nodes;
+        try {
+            return objectMapper.readValue(participantListFile, new TypeReference<>() {});
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

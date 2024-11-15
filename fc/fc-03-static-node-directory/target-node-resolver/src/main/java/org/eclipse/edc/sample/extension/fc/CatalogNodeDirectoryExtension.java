@@ -21,28 +21,34 @@ import org.eclipse.edc.runtime.metamodel.annotation.Setting;
 import org.eclipse.edc.spi.iam.IdentityService;
 import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.system.ServiceExtension;
+import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.spi.types.TypeManager;
 
+import java.io.File;
+
 public class CatalogNodeDirectoryExtension implements ServiceExtension {
-    @Setting
-    private static final String REGISTRATION_SERVICE_API_URL = "registration.service.api.url";
+    public static final String PARTICIPANT_LIST_FILE_PATH = "fc/fc-03-static-node-directory/target-node-resolver/catalog-node-directory.json";
 
-    @Inject
+    private File participantListFile;
     private Monitor monitor;
-
-    @Inject
-    private TypeManager typeManager;
-
-    @Inject
-    private IdentityService identityService;
 
     private TargetNodeDirectory nodeDirectory;
 
+    @Override
+    public void initialize(ServiceExtensionContext context) {
+        var participantsPath = context.getConfig().getString(PARTICIPANT_LIST_FILE_PATH);
+        monitor = context.getMonitor().withPrefix("DEMO");
+
+        participantListFile = new File(participantsPath).getAbsoluteFile();
+        if (!participantListFile.exists()) {
+            monitor.warning("Path '%s' does not exist.".formatted(participantsPath));
+        }
+    }
 
     @Provider 
     public TargetNodeDirectory federatedCacheNodeDirectory() {
         if (nodeDirectory == null) {
-            nodeDirectory = new CatalogNodeDirectory();
+            nodeDirectory = new CatalogNodeDirectory(participantListFile);
         }
         return nodeDirectory;
     }
