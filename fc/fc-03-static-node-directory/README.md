@@ -7,7 +7,7 @@ This list of Target Catalog Nodes, represented by [TargetNodes](https://github.c
 is provided by the [TargetNodeDirectory](https://github.com/eclipse-edc/FederatedCatalog/blob/main/spi/crawler-spi/src/main/java/org/eclipse/edc/crawler/spi/TargetNodeDirectory.java).
 This TargetNodeDirectory serves as a 'phone book', maintaining specific information about the 
 dataspace participants. It accepts an initial list of participants (e.g. list of participants' 
-IDs), and resolves this input to a list of TargetNodes which is readable by the FC crawler.
+IDs), and resolves this input to a list of TargetNodes.
 
 The initial participant list may vary in its source and format depending on specific use cases. 
 To accommodate these variations, different implementations of the TargetNodeDirectory can be 

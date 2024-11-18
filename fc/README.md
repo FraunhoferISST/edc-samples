@@ -3,8 +3,14 @@
 The samples in this section focus on the topic of Federated Catalogs.
 
 ### Motivation
-The Federated Catalog (FC) represents the aggregated catalogs of multiple participants in a dataspace. To achieve that, the FC employs a set of crawlers, that periodically scrape the dataspace requesting the catalog from each participant in a list of participants and consolidates them in a local cache.
-Instead of querying each participant individually, keeping a locally cached version of every participant's catalog makes catalog queries more responsive and robust, and it can cause a reduction in network load.
+
+The Federated Catalog (FC) functions as an aggregated repository of
+catalogs obtained from multiple
+participants in the dataspace. To accomplish this, the FC utilizes crawlers
+that periodically crawl the catalogs from each participant and store this list 
+of catalogs in a local cache.
+By maintaining this locally cached version of catalogs, it eliminates the need to query 
+each participant individually, resulting in faster and more reliable queries.
 
 The following samples shows how to
 * implement, build and run different versions of FC e.g.
@@ -19,6 +25,17 @@ The following samples shows how to
   * Event-driven mechanisms
   * Manual trigger via API
 
+The following samples shows how to
+* implement, build and run different versions of FC e.g.
+  * standalone,
+  * embedded.
+* implement TargetNodeDirectory and resolve Target Nodes, 
+  * from a static file containing all participants' DSP endpoints,
+  * from a static file containing all participants' DIDs
+  * from external participants' registry
+* modify execution plan -
+  * Event-driven mechanisms
+  * Manual trigger via API
 
 
 ## Samples

@@ -20,7 +20,7 @@ plugins {
 
 dependencies {
     runtimeOnly(project(":fc:fc-00-basic:federated-catalog-base"))
-    runtimeOnly(project(":fc:fc-00-basic:static-node-resolver"))
+    runtimeOnly(project(":fc:fc-00-basic:fixed-node-resolver"))
 
 //    all the necessary modules for runtime
     implementation(libs.edc.connector.core)

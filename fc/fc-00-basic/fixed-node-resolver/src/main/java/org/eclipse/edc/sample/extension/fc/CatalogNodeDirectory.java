@@ -14,36 +14,26 @@
 
 package org.eclipse.edc.sample.extension.fc;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.edc.crawler.spi.TargetNode;
 import org.eclipse.edc.crawler.spi.TargetNodeDirectory;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CatalogNodeDirectory implements TargetNodeDirectory {
 
-    private final ObjectMapper objectMapper;
-
-    public CatalogNodeDirectory() {
-        this.objectMapper = new ObjectMapper();
-    }
-
-    public List<TargetNode> readNodesFromJson() {
-        try {
-            String participant_directory = "fc/fc-00-basic/static-node-resolver/catalog-node-directory.json";
-            return objectMapper.readValue(new File(participant_directory), new TypeReference<List<TargetNode>>(){});
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
     @Override
     public List<TargetNode> getAll() {
-        return readNodesFromJson();
+        List<String> protocolList = new ArrayList<>();
+        protocolList.add("dataspace-protocol-http");
+
+        TargetNode participantNode = new TargetNode("https://w3id.org/edc/v0.0.1/ns/",
+                "provider",
+                "http://localhost:19194/protocol", protocolList);
+
+        List<TargetNode> targetNodes = new ArrayList<>();
+        targetNodes.add(participantNode);
+        return targetNodes;
     }
 
     @Override
