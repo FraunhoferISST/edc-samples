@@ -23,7 +23,6 @@ import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import java.io.File;
 
 public class CatalogNodeDirectoryExtension implements ServiceExtension {
-    public static final String PARTICIPANT_LIST_FILE_PATH = "fc/fc-03-static-node-directory/target-node-resolver/catalog-node-directory.json";
 
     private File participantListFile;
     private Monitor monitor;
@@ -32,7 +31,7 @@ public class CatalogNodeDirectoryExtension implements ServiceExtension {
 
     @Override
     public void initialize(ServiceExtensionContext context) {
-        var participantsPath = context.getConfig().getString(PARTICIPANT_LIST_FILE_PATH);
+        var participantsPath = "fc/fc-03-static-node-directory/target-node-resolver/catalog-node-directory.json";
         monitor = context.getMonitor().withPrefix("DEMO");
 
         participantListFile = new File(participantsPath).getAbsoluteFile();
