@@ -1,7 +1,7 @@
 [
   {
     "name": "https://w3id.org/edc/v0.0.1/ns/",
-    "id": "provider-2",
+    "id": "provider",
     "url": "http://localhost:19194/protocol",
     "supportedProtocols": ["dataspace-protocol-http"]
   }

@@ -3,15 +3,25 @@ The Federated Catalog requires a list of Target Catalog Nodes (TCN), which are e
 The catalog crawler then crawls the DSP endpoints of these listed nodes, and stores the consolidated set of catalogs in a Fderated Catalog Cache (FCC).
 
 
-This list of Target Nodes is provided by the TargetNodeDirectory.
-The TargetNodeDirectory serves as a 'phone book', maintaining specific information about the dataspace participants. It accepts an initial list of participants (e.g. list of participants' IDs), and resolves this input to a list of TargetNodes which is readable by the FC crawler.
+This list of Target Catalog Nodes, represented by [TargetNodes](https://github.com/eclipse-edc/FederatedCatalog/blob/main/spi/crawler-spi/src/main/java/org/eclipse/edc/crawler/spi/TargetNode.java), 
+is provided by the [TargetNodeDirectory](https://github.com/eclipse-edc/FederatedCatalog/blob/main/spi/crawler-spi/src/main/java/org/eclipse/edc/crawler/spi/TargetNodeDirectory.java).
+This TargetNodeDirectory serves as a 'phone book', maintaining specific information about the 
+dataspace participants. It accepts an initial list of participants (e.g. list of participants' 
+IDs), and resolves this input to a list of TargetNodes which is readable by the FC crawler.
 
-The initial participant list may vary in its source and format depending on specific use cases. To accommodate these variations, different implementations of the TargetNodeDirectory can be created to customize the resolution process of Target Nodes from the provided participant list. In this sample, we will build a Catalog Node Resolver that reads the participants' data from a static file and resolves it into TargetNodes.
+The initial participant list may vary in its source and format depending on specific use cases. 
+To accommodate these variations, different implementations of the TargetNodeDirectory can be 
+adapted to customize the resolution process of Target Nodes from the provided participant list. 
+In this sample, we will build a Catalog Node Resolver that reads the participants' data from a 
+static file, [participants.json](../fc-00-basic/static-node-resolver/participants.json) 
+and resolves it into TargetNodes.
 
 
 The code in this sample has been organized into several Java modules:
 
-- `catalog-node-resolver`: contains the `TargetNodeDirectory` implementation which will list of Target Catalog Nodes.
+- `target-node-resolver`: contains `CatalogNodeDirectory`, an implementation of 
+`TargetNodeDirectory`, which accepts the [`participants.json`](../fc-00-basic/static-node-resolver/participants.json) 
+and returns a list of TargetNodes.
 - `embedded|standalone-fc-with-node-resolver`: the embedded/ standalone-fc that will be using the `catalog-node-resolver`.
 
 
@@ -20,17 +30,37 @@ The code in this sample has been organized into several Java modules:
 ## Implement the Catalog Node Resolver
 
 ### Participant file
-The TargetNodeDirectory takes in a participant list and converts it to a list of TargetNodes. The TargetNode of a participant contains certain information about the participant along with its DSP endpoint, so the crawler knows which endpoints to crawl.
+To keep things straightforward, in this sample we will store our participant list in a static
+json file, [participant.json](./target-node-resolver/participants.json).
+This [`participant.json`](./target-node-resolver/participants.json)
+stores the [TargetNodes](https://github.com/eclipse-edc/FederatedCatalog/blob/main/spi/crawler-spi/src/main/java/org/eclipse/edc/crawler/spi/TargetNode.java)
+properties of the dataspace participants.
+As we will be using the `participant-connector` from [fc-00-basic](../fc-00-basic), 
+currently the [`participant.json`](./target-node-resolver/participants.json)
+contains only the TargetNode properties of the `participant-connector`, including its DSP endpoint.
+```json 
+{
+    "name": "https://w3id.org/edc/v0.0.1/ns/",
+    "id": "provider",
+    "url": "http://localhost:19194/protocol",
+    "supportedProtocols": ["dataspace-protocol-http"]
+}
+```
 
-> In the simplest of cases, this participant list can be stored in a static file, but more complex implementations such as a centralized participant registry can also be implemented.
-
-In this sample, our participant file is a static JSON that stores the TargetNode properties of our participants.
-As we will be using the `participant-connector` from [fc-00], this [satic file]()contains the TargetNode properties of the `participant-connector` including its DSP endpoint.
+However, in a real-world scenario, this participant file should not directly 
+include these [`TargetNodes`](https://github.com/eclipse-edc/FederatedCatalog/blob/main/spi/crawler-spi/src/main/java/org/eclipse/edc/crawler/spi/TargetNode.java)
+properties. Instead, it should contain some form of participant node identifier
+(e.g. participants' DIDs). 
+Additionally, instead of relying on a static file,
+more complex implementations like centralized participant registry can also be adapted.
 
 ### Target Node Resolver
 
 #### TargetNodeResolver
-The [TargetNodeResolver]() implements TargetNodeDirectory and overrides its `getAll()` method. In our implementation, this method maps the array of Json objects read from the [static file]() to a list of TargetNodes.
+The [CatalogNodeResolver](./target-node-resolver/src/main/java/org/eclipse/edc/sample/extension/fc/CatalogNodeDirectory.java) 
+implements TargetNodeDirectory and overrides its `getAll()` method. 
+In our implementation, this method maps the array of Json objects from the [`participant.json`](./target-node-resolver/participants.json) 
+to a list of TargetNodes.
 
 ```java
 public class CatalogNodeDirectory implements TargetNodeDirectory {
@@ -46,13 +76,20 @@ public class CatalogNodeDirectory implements TargetNodeDirectory {
     //...
 }
 ```
-The ExecutionManager invokes this method during the preparation phase of a crawler run, to obtain the list of TargetNodes. The crawler uses this list to query the DSP endpoints of the participants and collects the offered catalogs. The aggregated catalogs is stored in a Fderated Catalog Cache (FCC). In this example we are using the default implementation of a FCC, [InMemoryFederatedCatalogCache](https://github.com/eclipse-edc/FederatedCatalog/blob/main/core/federated-catalog-core/src/main/java/org/eclipse/edc/catalog/store/InMemoryFederatedCatalogCache.java).
+During the preparation phase of a crawler run, the FC ExecutionManager invokes this method 
+to obtain the list of TargetNodes. 
+The crawler requests the DSP endpoints of the participants and stores the
+aggregated catalogs in a Federated Catalog Cache (FCC). 
+In this example we are using the default implementation of an FCC, [InMemoryFederatedCatalogCache](https://github.com/eclipse-edc/FederatedCatalog/blob/main/core/federated-catalog-core/src/main/java/org/eclipse/edc/catalog/store/InMemoryFederatedCatalogCache.java).
 
 
 
 ## Run Federated Catalog with Node Resolver
 
-Previously, we discussed the implementation of standalone and embedded FCs. In this example, we introduce two separate modules,`standalone-fc-with-node-resolver` and `embedded-fc-with-node-resolver`, which demonstrate the implementation of each type of federated catalogs that uses the TargetNodeResolver.
+Previously, we discussed the implementation of standalone and embedded FCs. 
+In this example, we introduce two separate modules,`standalone-fc-with-node-resolver` 
+and `embedded-fc-with-node-resolver`, which demonstrate the implementation of each type 
+of federated catalogs that uses the `CatalogNodeResolver`.
 
 ### Run standalone-fc with Node Resolver
 
@@ -76,7 +113,7 @@ If the execution is successful, then the Catalog API of our standalone FC will l
 
 #### Test catalog query API
 Before requesting the catalog API, make sure the `partcipant-connector` that we have set up in the
-[fc-00-basic](../../fc/fc-00-basic) is running, and it has a contract offer.
+[fc-00-basic](../fc-00-basic) is running, and it has a contract offer.
 
 To get the combined set of catalogs, use the following request:
 
