@@ -81,6 +81,7 @@ public class S3BucketProvisioner implements Provisioner<S3BucketResourceDefiniti
                 .hasToken(true)
                 .region(resourceDefinition.getRegionId())
                 .bucketName(resourceDefinition.getBucketName())
+                .objectName(resourceDefinition.getObjectName())
                 .transferProcessId(resourceDefinition.getTransferProcessId())
                 .resourceName(resourceDefinition.getBucketName())
                 .endpointOverride(resourceDefinition.getEndpointOverride())
