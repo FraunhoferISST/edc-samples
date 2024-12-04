@@ -24,6 +24,7 @@ import org.eclipse.edc.connector.controlplane.transfer.spi.types.ProvisionedData
 import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.ACCESS_KEY_ID;
 import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.BUCKET_NAME;
 import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.ENDPOINT_OVERRIDE;
+import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.OBJECT_NAME;
 import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.REGION;
 import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.SECRET_ACCESS_KEY;
 
@@ -76,6 +77,11 @@ public class S3BucketProvisionedResource extends ProvisionedDataDestinationResou
 
         public Builder bucketName(String bucketName) {
             dataAddressBuilder.property(BUCKET_NAME, bucketName);
+            return this;
+        }
+    
+        public Builder objectName(String objectName) {
+            dataAddressBuilder.property(OBJECT_NAME, objectName);
             return this;
         }
 

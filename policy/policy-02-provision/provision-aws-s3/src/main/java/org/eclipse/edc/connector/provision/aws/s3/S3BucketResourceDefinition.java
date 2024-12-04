@@ -30,6 +30,7 @@ import java.util.Objects;
 public class S3BucketResourceDefinition extends ResourceDefinition {
     private String regionId;
     private String bucketName;
+    private String objectName;
     private String endpointOverride;
     private String accessKeyId;
     private String secretAccessKey;
@@ -43,6 +44,10 @@ public class S3BucketResourceDefinition extends ResourceDefinition {
 
     public String getBucketName() {
         return bucketName;
+    }
+    
+    public String getObjectName() {
+        return objectName;
     }
     
     public String getEndpointOverride() {
@@ -62,6 +67,7 @@ public class S3BucketResourceDefinition extends ResourceDefinition {
         return initializeBuilder(new Builder())
                 .regionId(regionId)
                 .bucketName(bucketName)
+                .objectName(objectName)
                 .endpointOverride(endpointOverride)
                 .accessKeyId(accessKeyId)
                 .secretAccessKey(secretAccessKey);
@@ -85,6 +91,11 @@ public class S3BucketResourceDefinition extends ResourceDefinition {
 
         public Builder bucketName(String bucketName) {
             resourceDefinition.bucketName = bucketName;
+            return this;
+        }
+    
+        public Builder objectName(String objectName) {
+            resourceDefinition.objectName = objectName;
             return this;
         }
 
