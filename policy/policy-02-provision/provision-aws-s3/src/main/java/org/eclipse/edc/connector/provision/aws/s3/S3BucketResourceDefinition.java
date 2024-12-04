@@ -31,7 +31,7 @@ public class S3BucketResourceDefinition extends ResourceDefinition {
     private String regionId;
     private String bucketName;
     private String endpointOverride;
-    private DataAddress originalDataAddress;
+    private String keyName;
 
     private S3BucketResourceDefinition() {
     }
@@ -48,8 +48,8 @@ public class S3BucketResourceDefinition extends ResourceDefinition {
         return endpointOverride;
     }
     
-    public DataAddress getOriginalDataAddress() {
-        return originalDataAddress;
+    public String getKeyName() {
+        return keyName;
     }
     
     @Override
@@ -58,7 +58,7 @@ public class S3BucketResourceDefinition extends ResourceDefinition {
                 .regionId(regionId)
                 .bucketName(bucketName)
                 .endpointOverride(endpointOverride)
-                .originalDataAddress(originalDataAddress);
+                .keyName(keyName);
     }
 
     @JsonPOJOBuilder(withPrefix = "")
@@ -87,8 +87,8 @@ public class S3BucketResourceDefinition extends ResourceDefinition {
             return this;
         }
         
-        public Builder originalDataAddress(DataAddress dataAddress) {
-            resourceDefinition.originalDataAddress = dataAddress;
+        public Builder keyName(String keyName) {
+            resourceDefinition.keyName = keyName;
             return this;
         }
 
