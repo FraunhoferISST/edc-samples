@@ -25,6 +25,7 @@ import software.amazon.awssdk.regions.Region;
 
 import static java.util.UUID.randomUUID;
 import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.ACCESS_KEY_ID;
+import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.OBJECT_NAME;
 import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.SECRET_ACCESS_KEY;
 
 /**
@@ -44,6 +45,7 @@ public class S3ConsumerResourceDefinitionGenerator implements ConsumerResourceDe
 
         return S3BucketResourceDefinition.Builder.newInstance().id(id)
                 .bucketName(dataDestination.getStringProperty(S3BucketSchema.BUCKET_NAME))
+                .objectName(dataDestination.getStringProperty(OBJECT_NAME))
                 .regionId(dataDestination.getStringProperty(S3BucketSchema.REGION))
                 .endpointOverride(endpointOverride)
                 .accessKeyId(transferProcess.getDataDestination().getStringProperty(ACCESS_KEY_ID))
