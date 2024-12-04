@@ -44,6 +44,7 @@ public class S3ConsumerResourceDefinitionGenerator implements ConsumerResourceDe
                 .bucketName(dataDestination.getStringProperty(S3BucketSchema.BUCKET_NAME))
                 .regionId(dataDestination.getStringProperty(S3BucketSchema.REGION))
                 .endpointOverride(endpointOverride)
+                .originalDataAddress(transferProcess.getDataDestination())
                 .build();
     }
 

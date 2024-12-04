@@ -19,6 +19,7 @@ package org.eclipse.edc.connector.provision.aws.s3;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.eclipse.edc.connector.controlplane.transfer.spi.types.ResourceDefinition;
+import org.eclipse.edc.spi.types.domain.DataAddress;
 
 import java.util.Objects;
 
@@ -30,6 +31,7 @@ public class S3BucketResourceDefinition extends ResourceDefinition {
     private String regionId;
     private String bucketName;
     private String endpointOverride;
+    private DataAddress originalDataAddress;
 
     private S3BucketResourceDefinition() {
     }
@@ -41,16 +43,22 @@ public class S3BucketResourceDefinition extends ResourceDefinition {
     public String getBucketName() {
         return bucketName;
     }
-
+    
+    public String getEndpointOverride() {
+        return endpointOverride;
+    }
+    
+    public DataAddress getOriginalDataAddress() {
+        return originalDataAddress;
+    }
+    
     @Override
     public Builder toBuilder() {
         return initializeBuilder(new Builder())
                 .regionId(regionId)
-                .bucketName(bucketName);
-    }
-
-    public String getEndpointOverride() {
-        return endpointOverride;
+                .bucketName(bucketName)
+                .endpointOverride(endpointOverride)
+                .originalDataAddress(originalDataAddress);
     }
 
     @JsonPOJOBuilder(withPrefix = "")
@@ -76,6 +84,11 @@ public class S3BucketResourceDefinition extends ResourceDefinition {
 
         public Builder endpointOverride(String endpointOverride) {
             resourceDefinition.endpointOverride = endpointOverride;
+            return this;
+        }
+        
+        public Builder originalDataAddress(DataAddress dataAddress) {
+            resourceDefinition.originalDataAddress = dataAddress;
             return this;
         }
 
