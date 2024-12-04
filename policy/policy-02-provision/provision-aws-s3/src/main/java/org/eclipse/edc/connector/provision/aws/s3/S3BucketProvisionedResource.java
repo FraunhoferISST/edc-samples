@@ -74,12 +74,16 @@ public class S3BucketProvisionedResource extends ProvisionedDataDestinationResou
 
         public Builder bucketName(String bucketName) {
             dataAddressBuilder.property(BUCKET_NAME, bucketName);
-            dataAddressBuilder.keyName("s3-temp-" + bucketName);
             return this;
         }
 
         public Builder endpointOverride(String endpointOverride) {
             dataAddressBuilder.property(ENDPOINT_OVERRIDE, endpointOverride);
+            return this;
+        }
+        
+        public Builder keyName(String keyName) {
+            dataAddressBuilder.keyName(keyName);
             return this;
         }
     }
