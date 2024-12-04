@@ -24,6 +24,8 @@ import org.eclipse.edc.policy.model.Policy;
 import software.amazon.awssdk.regions.Region;
 
 import static java.util.UUID.randomUUID;
+import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.ACCESS_KEY_ID;
+import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.SECRET_ACCESS_KEY;
 
 /**
  * Generates S3 buckets on the consumer (requesting connector) that serve as data destinations.
@@ -44,7 +46,8 @@ public class S3ConsumerResourceDefinitionGenerator implements ConsumerResourceDe
                 .bucketName(dataDestination.getStringProperty(S3BucketSchema.BUCKET_NAME))
                 .regionId(dataDestination.getStringProperty(S3BucketSchema.REGION))
                 .endpointOverride(endpointOverride)
-                .keyName(transferProcess.getDataDestination().getKeyName())
+                .accessKeyId(transferProcess.getDataDestination().getStringProperty(ACCESS_KEY_ID))
+                .secretAccessKey(transferProcess.getDataDestination().getStringProperty(SECRET_ACCESS_KEY))
                 .build();
     }
 

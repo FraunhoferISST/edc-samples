@@ -21,9 +21,11 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.eclipse.edc.aws.s3.spi.S3BucketSchema;
 import org.eclipse.edc.connector.controlplane.transfer.spi.types.ProvisionedDataDestinationResource;
 
+import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.ACCESS_KEY_ID;
 import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.BUCKET_NAME;
 import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.ENDPOINT_OVERRIDE;
 import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.REGION;
+import static org.eclipse.edc.aws.s3.spi.S3BucketSchema.SECRET_ACCESS_KEY;
 
 
 /**
@@ -82,8 +84,13 @@ public class S3BucketProvisionedResource extends ProvisionedDataDestinationResou
             return this;
         }
         
-        public Builder keyName(String keyName) {
-            dataAddressBuilder.keyName(keyName);
+        public Builder accessKeyId(String accessKeyId) {
+            dataAddressBuilder.property(ACCESS_KEY_ID, accessKeyId);
+            return this;
+        }
+    
+        public Builder secretAccessKey(String secretAccessKey) {
+            dataAddressBuilder.property(SECRET_ACCESS_KEY, secretAccessKey);
             return this;
         }
     }

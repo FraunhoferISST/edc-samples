@@ -84,7 +84,8 @@ public class S3BucketProvisioner implements Provisioner<S3BucketResourceDefiniti
                 .transferProcessId(resourceDefinition.getTransferProcessId())
                 .resourceName(resourceDefinition.getBucketName())
                 .endpointOverride(resourceDefinition.getEndpointOverride())
-                .keyName(resourceDefinition.getKeyName())
+                .accessKeyId(resourceDefinition.getAccessKeyId())
+                .secretAccessKey(resourceDefinition.getSecretAccessKey())
                 .build();
         
         monitor.debug("S3BucketProvisioner: Bucket created successfully: " + resourceDefinition.getBucketName());
