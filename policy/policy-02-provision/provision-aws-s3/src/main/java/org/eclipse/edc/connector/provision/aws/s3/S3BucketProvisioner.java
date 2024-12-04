@@ -62,7 +62,7 @@ public class S3BucketProvisioner implements Provisioner<S3BucketResourceDefiniti
                 .createBucketConfiguration(CreateBucketConfiguration.builder().build())
                 .build();
     
-        monitor.debug("S3ProvisionPipeline: create bucket " + resourceDefinition.getBucketName());
+        monitor.debug("S3Provisioner: create bucket " + resourceDefinition.getBucketName());
         return s3AsyncClient.createBucket(request)
                 .thenApply(response -> provisionSucceeded(resourceDefinition));
     }
@@ -84,9 +84,10 @@ public class S3BucketProvisioner implements Provisioner<S3BucketResourceDefiniti
                 .transferProcessId(resourceDefinition.getTransferProcessId())
                 .resourceName(resourceDefinition.getBucketName())
                 .endpointOverride(resourceDefinition.getEndpointOverride())
+                .dataAddress(resourceDefinition.getOriginalDataAddress())
                 .build();
         
-        monitor.debug("S3BucketProvisioner: Bucket request submitted: " + resourceDefinition.getBucketName());
+        monitor.debug("S3BucketProvisioner: Bucket created successfully: " + resourceDefinition.getBucketName());
         var response = ProvisionResponse.Builder.newInstance().resource(resource).build();
         return StatusResult.success(response);
     }
