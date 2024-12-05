@@ -48,8 +48,8 @@ public class ConsumerPolicyFunctionsExtension implements ServiceExtension {
         ruleBindingRegistry.bind(KEY, MANIFEST_VERIFICATION_SCOPE);
         policyEngine.registerFunction(MANIFEST_VERIFICATION_SCOPE, Permission.class, KEY, new RegulateFilePathFunction(monitor));
 
-        vault.storeSecret("S3AccessKey", "admin");
-        vault.storeSecret("S3SecretKey", "password");
+        vault.storeSecret("accessKeyId", "admin");
+        vault.storeSecret("secretAccessKey", "password");
     }
 
     @Override
