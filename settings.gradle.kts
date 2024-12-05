@@ -52,6 +52,10 @@ include(":policy:policy-01-policy-enforcement:policy-enforcement-provider")
 include(":policy:policy-01-policy-enforcement:policy-enforcement-consumer")
 include(":policy:policy-01-policy-enforcement:policy-functions")
 
+include(":policy:policy-02-provision:provision-aws-s3")
+include(":policy:policy-02-provision:policy-provision-consumer")
+include(":policy:policy-02-provision:policy-provision-provider")
+
 // modules for code samples ------------------------------------------------------------------------
 include(":advanced:advanced-02-custom-runtime")
 

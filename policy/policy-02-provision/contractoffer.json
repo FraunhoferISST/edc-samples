@@ -1,0 +1,31 @@
+{
+  "@context": {
+    "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+  },
+  "@type": "ContractRequest",
+  "counterPartyAddress": "http://localhost:8282/protocol",
+  "protocol": "dataspace-protocol-http",
+  "policy": {
+    "@context": "http://www.w3.org/ns/odrl.jsonld",
+    "@id": "MQ==:dGVzdC1kb2N1bWVudA==:YjY2YWU2OGQtNjVmMS00ODEyLTg0MzktMjNlYmZjZjY5YTdk",
+    "@type": "Offer",
+    "assigner": "provider",
+    "target": "test-document",
+    "permission": [
+      {
+        "action": {
+          "@id": "USE"
+        },
+        "constraint": {
+          "leftOperand": {
+            "@id": "POLICY_REGULATE_FILE_PATH"
+          },
+          "operator": {
+            "@id": "odrl:eq"
+          },
+          "rightOperand": "path/to/desired/location/transfer.txt"
+        }
+      }
+    ]
+  }
+}
