@@ -7,8 +7,8 @@
   },
   {
     "name": "https://w3id.org/edc/v0.0.1/ns/",
-    "id": "provider-2",
-    "url": "http://localhost:39194/protocol",
+    "id": "consumer",
+    "url": "http://localhost:29194/protocol",
     "supportedProtocols": ["dataspace-protocol-http"]
   }
 ]
