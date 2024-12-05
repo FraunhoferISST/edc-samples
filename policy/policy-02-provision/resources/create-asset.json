@@ -2,9 +2,9 @@
   "@context": {
     "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
   },
-  "@id": "test-document",
+  "@id": "1",
   "properties": {
-    "name": "Test Document",
+    "name": "example JSON data",
     "contenttype": "application/json"
   },
   "dataAddress": {
