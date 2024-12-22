@@ -1,8 +1,15 @@
 # Create a policy for provisioning 
 
-This Sample demonstrates a policy-driven approach to secure file transfers between a provider and consumer, utilizing MinIO as an S3-compatible storage solution. The setup provides a framework for managing assets with fine-grained access controls, enforced by policies. It showcases the steps required to establish assets, define and enforce policies, negotiate contracts, and transfer files according to specified policy constraints. This example will walk you through setting up MinIO, configuring connectors, and executing a complete file transfer flow with policy-regulated asset access.
+This Sample provides a practical demonstration of using a **policy-driven approach** to enable secure file transfers between a **provider** and a **consumer**. It utilizes **MinIO**, an S3-compatible storage solution, to illustrate how assets can be managed with detailed access controls enforced by policies. The process covers everything from defining resources to negotiating contracts and transferring files, all while ensuring compliance with the defined policy constraints.
 
-In this sample, a file named `test-document` will be uploaded to the **provider-bucket** in MinIO. Once the file transfer is complete, the document will be moved to the **consumer-bucket** on the consumer’s side.
+The main objective is to show how a file named `test-document` can be securely moved from a **provider-bucket** to a **consumer-bucket** in MinIO. This transfer is regulated by a policy that enforces location constraints, ensuring the entire process adheres to organizational or regulatory requirements.
+
+# Provisioning and Policy Enforcement
+
+Provisioning in this sample involves the secure and policy-regulated transfer of assets between a provider and a consumer using MinIO as an S3-compatible storage solution. The process ensures that resources are provisioned dynamically while adhering to defined policies that govern access controls, permissions, and constraints.
+
+The policy used in this sample enforces a location constraint, ensuring that resources are only accessible in specific regions (e.g., `region = eu-central-1`). During provisioning, the policy framework evaluates constraints and applies necessary adjustments, such as dynamically updating the resource's region if it does not comply with the policy.
+
 
 
 ## Prerequisites
@@ -10,6 +17,8 @@ In this sample, a file named `test-document` will be uploaded to the **provider-
 Ensure the following:
 - Docker is installed: [Docker Installation](https://docs.docker.com/engine/install/).
 - MinIO is configured as an S3-compatible storage emulator.
+- The AWS CLI is installed and configured for interaction with MinIO: Ensure that the **AWS CLI** is installed and configured to interact with **MinIO**. Follow the [AWS CLI Integration Guide](https://min.io/docs/minio/linux/integrations/aws-cli-with-minio.html) for detailed steps.
+
 
 ## Set Up MinIO
 
@@ -144,6 +153,21 @@ curl -H 'X-Api-Key: password' http://localhost:9192/management/v3/transferproces
 
 Once the transfer is complete, check the **consumer-bucket** in MinIO for the transferred file. Access MinIO at [http://localhost:9000](http://localhost:9000) and log in with `admin` / `password`.
 
+
+### Step 10: Retrieve the Region of a Bucket
+
+To retrieve the region of a bucket using the AWS CLI, use the following command:
+
+```bash
+aws --endpoint-url http://localhost:9000 s3api get-bucket-location --bucket <bucket-name>
+```
+### expected Output
+
+```json
+{
+    "LocationConstraint": "eu-central-1"
+}
+```
 ## Stop docker container
 Execute the following command in a terminal window to stop the docker container:
 ```bash

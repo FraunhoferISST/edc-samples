@@ -9,8 +9,23 @@
   "policy": {
     "@context": "http://www.w3.org/ns/odrl.jsonld",
     "@type": "Offer",
-    "@id": "{{contract-offer-id}}",
+    "@id": "MQ==:MQ==:YWJhZWQ5ZTktYjU4MC00ODkyLWE0ZjUtZmI5NDc5NGUzOTk2",
     "assigner": "provider",
-    "target": "1"
+    "target": "1",
+    "permission": [
+      {
+        "action": "use",
+        "constraint": {
+          "@type": "AtomicConstraint",
+          "leftOperand": "region",
+          "operator": {
+            "@id": "odrl:eq"
+          },
+          "rightOperand": "eu-central-1"
+        }
+      }
+    ],
+    "prohibition": [],
+    "obligation": []
   }
 }

@@ -1,26 +1,18 @@
 version: "3.9"
 
 services:
-  minio:
-    image: docker.io/bitnami/minio:latest
+  localstack:
+    image: localstack/localstack:3.5.0
     ports:
-      - '9000:9000'
-      - '9001:9001'
-    volumes:
-      - 'minio_data:/data'
+      - "4566:4566"
     environment:
-      - MINIO_ROOT_USER=admin
-      - MINIO_ROOT_PASSWORD=password
-
-  mc:
-    image: minio/mc
-    depends_on:
-      - minio
+      - SERVICES=s3
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
     volumes:
-      - ./provider-bucket:/provider-bucket
-    entrypoint: >
-      /bin/sh -c /provider-bucket/init.sh
+      - "localstack_data:/var/lib/localstack"
+      - "./init-scripts:/etc/localstack/init-scripts"
 
 volumes:
-  minio_data:
+  localstack_data:
     driver: local

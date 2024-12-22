@@ -14,6 +14,7 @@
 
 package org.eclipse.edc.sample.extension.policy;
 
+import org.eclipse.edc.connector.controlplane.transfer.spi.policy.ProvisionManifestVerifyPolicyContext;
 import org.eclipse.edc.policy.engine.spi.PolicyEngine;
 import org.eclipse.edc.policy.engine.spi.RuleBindingRegistry;
 import org.eclipse.edc.policy.model.Permission;
@@ -24,14 +25,12 @@ import org.eclipse.edc.spi.security.Vault;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 
-//import static org.eclipse.edc.connector.controlplane.transfer.spi.provision.ResourceManifestGenerator.MANIFEST_VERIFICATION_SCOPE;
-import static org.eclipse.edc.policy.engine.spi.PolicyEngine.ALL_SCOPES;
+import static org.eclipse.edc.connector.controlplane.transfer.spi.policy.ProvisionManifestVerifyPolicyContext.MANIFEST_VERIFICATION_SCOPE;
 
 @Extension(value = ConsumerPolicyFunctionsExtension.NAME)
 public class ConsumerPolicyFunctionsExtension implements ServiceExtension {
     public static final String NAME = "Consumer Policy Functions Extension";
-    public static final String KEY = "POLICY_REGULATE_FILE_PATH";
-    public static final String MANIFEST_VERIFICATION_SCOPE = "provision.manifest.verify";
+    public static final String KEY = "https://w3id.org/edc/v0.0.1/ns/region";
 
     @Inject
     private Monitor monitor;
@@ -44,9 +43,10 @@ public class ConsumerPolicyFunctionsExtension implements ServiceExtension {
 
     @Override
     public void initialize(ServiceExtensionContext context) {
-        ruleBindingRegistry.bind("USE", ALL_SCOPES);
+        ruleBindingRegistry.bind("http://www.w3.org/ns/odrl/2/use", MANIFEST_VERIFICATION_SCOPE);
         ruleBindingRegistry.bind(KEY, MANIFEST_VERIFICATION_SCOPE);
-        policyEngine.registerFunction(MANIFEST_VERIFICATION_SCOPE, Permission.class, KEY, new RegulateFilePathFunction(monitor));
+
+        policyEngine.registerFunction(ProvisionManifestVerifyPolicyContext.class, Permission.class, KEY, new RegionConstraintFunction(monitor));
 
         vault.storeSecret("accessKeyId", "admin");
         vault.storeSecret("secretAccessKey", "password");
@@ -56,5 +56,4 @@ public class ConsumerPolicyFunctionsExtension implements ServiceExtension {
     public String name() {
         return NAME;
     }
-
 }

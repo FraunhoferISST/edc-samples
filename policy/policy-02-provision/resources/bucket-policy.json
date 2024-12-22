@@ -3,11 +3,13 @@
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": [
-        "s3:*"
-      ],
+      "Principal": "*",
+      "Action": "s3:*",
       "Resource": [
-        "arn:aws:s3:::*"
+        "arn:aws:s3:::provider",
+        "arn:aws:s3:::provider/*",
+        "arn:aws:s3:::consumer",
+        "arn:aws:s3:::consumer/*"
       ]
     }
   ]
