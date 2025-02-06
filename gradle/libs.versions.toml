@@ -10,6 +10,7 @@ restAssured = "5.5.0"
 rsApi = "4.0.0"
 testcontainers = "1.20.4"
 kafkaClients = "3.9.0"
+awsSdk = "2.28.26"
 
 [libraries]
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
@@ -77,6 +78,9 @@ testcontainers-hashicorp-vault = { module = "org.testcontainers:vault", version.
 azure-storage-blob = { module = "com.azure:azure-storage-blob", version = "12.28.1" }
 minio-io = { module = "io.minio:minio", version = "8.5.13" }
 edc-data-plane-util = { module = "org.eclipse.edc:data-plane-util", version.ref = "edc" }
+testcontainers-localstack = { module = "org.testcontainers:localstack", version.ref = "testcontainers" }
+aws-sdk-s3 = { module = "software.amazon.awssdk:s3", version.ref = "awsSdk" }
+
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }

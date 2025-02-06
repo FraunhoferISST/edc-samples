@@ -13,7 +13,7 @@
     "region": "us-east-1",
     "bucketName": "consumer-bucket",
     "objectName": "test-document.txt",
-    "endpointOverride": "http://localhost:9000",
+    "endpointOverride": "http://localhost:4566",
     "accessKeyId": "admin",
     "secretAccessKey": "password"
   }

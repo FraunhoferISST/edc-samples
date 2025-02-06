@@ -1,45 +1,66 @@
-# Create a policy for provisioning 
+# Create a Policy for Provisioning
 
-This Sample provides a practical demonstration of using a **policy-driven approach** to enable secure file transfers between a **provider** and a **consumer**. It utilizes **MinIO**, an S3-compatible storage solution, to illustrate how assets can be managed with detailed access controls enforced by policies. The process covers everything from defining resources to negotiating contracts and transferring files, all while ensuring compliance with the defined policy constraints.
+This sample demonstrates a **policy-driven approach** to secure file transfers between a **provider** and a **consumer**. It utilizes **AWS S3 (simulated via LocalStack)** to manage assets with enforced access controls. The process covers defining resources, negotiating contracts, and transferring files while ensuring compliance with policy constraints.
 
-The main objective is to show how a file named `test-document` can be securely moved from a **provider-bucket** to a **consumer-bucket** in MinIO. This transfer is regulated by a policy that enforces location constraints, ensuring the entire process adheres to organizational or regulatory requirements.
+The objective is to securely transfer a file named `test-document.txt` from a **provider-bucket** to a **consumer-bucket** in **LocalStack S3**. The transfer is regulated by a policy enforcing location constraints to ensure compliance with organizational or regulatory requirements.
 
 # Provisioning and Policy Enforcement
 
-Provisioning in this sample involves the secure and policy-regulated transfer of assets between a provider and a consumer using MinIO as an S3-compatible storage solution. The process ensures that resources are provisioned dynamically while adhering to defined policies that govern access controls, permissions, and constraints.
+Provisioning in this sample ensures the **secure and policy-regulated** transfer of assets between a provider and a consumer using **AWS S3 in LocalStack** by dynamically allocating resources and enforcing policies before any data transfer occurs. The process begins with **resource definition**, where the provider specifies attributes such as bucket names, access credentials, and regional constraints. Next, **policy enforcement** ensures compliance by evaluating constraints like permitted regions, automatically adjusting resources if necessary. During **contract negotiation**, the provider and consumer establish access rules and conditions before initiating the transfer. Once the contract is agreed upon, **transfer execution** provisions the required storage, validates permissions, and executes the file transfer.
 
-The policy used in this sample enforces a location constraint, ensuring that resources are only accessible in specific regions (e.g., `region = eu-central-1`). During provisioning, the policy framework evaluates constraints and applies necessary adjustments, such as dynamically updating the resource's region if it does not comply with the policy.
+## Key Provisioning Code
 
+Below is a key snippet from the provisioning implementation:
 
+```java
+@Override
+public CompletableFuture<StatusResult<ProvisionResponse>> provision(S3BucketResourceDefinition resourceDefinition, Policy policy) {
+    var rq = S3ClientRequest.from(resourceDefinition.getRegionId(), resourceDefinition.getEndpointOverride());
+    var s3AsyncClient = clientProvider.s3AsyncClient(rq);
+    monitor.debug("Provisioning S3 bucket: " + resourceDefinition.getBucketName() +
+            " in region: " + resourceDefinition.getRegionId());
+    var request = CreateBucketRequest.builder()
+            .bucket(resourceDefinition.getBucketName())
+            .createBucketConfiguration(CreateBucketConfiguration.builder().build())
+            .build();
 
-## Prerequisites
-
-Ensure the following:
-- Docker is installed: [Docker Installation](https://docs.docker.com/engine/install/).
-- MinIO is configured as an S3-compatible storage emulator.
-- The AWS CLI is installed and configured for interaction with MinIO: Ensure that the **AWS CLI** is installed and configured to interact with **MinIO**. Follow the [AWS CLI Integration Guide](https://min.io/docs/minio/linux/integrations/aws-cli-with-minio.html) for detailed steps.
-
-
-## Set Up MinIO
-
-### Step 1: Start MinIO
-
-Use `docker-compose` to start MinIO:
-
-```bash
-docker-compose -f policy/policy-02-provision/docker-compose.yml up -d
+    monitor.debug("S3Provisioner: create bucket " + resourceDefinition.getBucketName());
+    return s3AsyncClient.createBucket(request)
+            .thenApply(response -> provisionSucceeded(resourceDefinition));
+}
 ```
 
-### Step 2: Create and Configure a MinIO Bucket
+The `provision` function automatically creates an S3 bucket in **LocalStack S3** while ensuring security policies are followed. It sets up an **S3 client**, logs the provisioning action, builds a request with the **bucket name**, and sends it. Once the bucket is successfully created, the system logs the result and confirms its availability.
+## Prerequisites
 
-1. Go to [MinIO Console](http://localhost:9001).
-2. Log in with the credentials in the `docker-compose.yml` file (line 12-13).
-3. Navigate to **Buckets** and create a bucket named **provider-bucket** for storing assets.
+Ensure you have the following installed:
+
+- **Docker**: [Docker Installation Guide](https://docs.docker.com/engine/install/)
+- **AWS CLI**: [AWS CLI Installation Guide](https://aws.amazon.com/cli/)
+- **LocalStack**: A local AWS cloud service emulator
+
+## Set Up LocalStack
+
+### Step 1: Start LocalStack
+
+Use `docker-compose` to start LocalStack:
+
+```bash
+docker-compose -f policy/policy-02-provision/resources/docker-compose.yml up -d
+```
+
+### Step 2: Verify LocalStack S3 Setup
+
+Check if S3 is running correctly:
+
+```bash
+aws --endpoint-url=http://localhost:4566 s3 ls
+```
 
 ## Build and Start the Connectors
 
-Before making the first request, build and run the provider and consumer connectors for this sample.
-
+First, we need to build and start both our connectors. Execute the following commands from the project root in two
+separate terminal windows (one per connector):
 ### Build and Run the Consumer Connector
 
 ```shell
@@ -63,7 +84,6 @@ java -D"edc.fs.config"=policy/policy-02-provision/policy-provision-provider/conf
 ```
 
 ## Define and Register Resources
-
 
 ### Step 1: Register the Asset on the Provider
 
@@ -102,7 +122,7 @@ curl -X POST "http://localhost:9192/management/v3/catalog/request" \
     -d @policy/policy-02-provision/resources/fetch-catalog.json -s | jq
 ```
 
-Please replace the {{contract-offer-id}} placeholder in the [negotiate-contract.json](resources/negotiate-contract.json) file with the contract offer id you found in the catalog at the path dcat:dataset.odrl:hasPolicy.@id.
+Please replace the {{contract-offer-id}} placeholder in the [negotiate-contract.json](resources/negotiate-contract.json) with the contract offer id you found in the catalog at the path dcat:dataset.odrl:hasPolicy.@id.
 
 
 
@@ -132,7 +152,7 @@ Replace `{{contract-agreement-id}}` in [filetransfer.json](resources/filetransfe
 
 ### Step 7: Initiate the File Transfer
 
-With the agreement in place, initiate the file transfer to the **consumer-bucket** in MinIO.
+With the agreement in place, initiate the file transfer to the **consumer-bucket** in LocalStack.
 
 ```bash
 curl -d @policy/policy-02-provision/resources/filetransfer.json \
@@ -149,29 +169,52 @@ Use the transfer process ID to verify the file transfer status.
 curl -H 'X-Api-Key: password' http://localhost:9192/management/v3/transferprocesses/<transfer-process-id> -s | jq
 ```
 
-### Step 9: Verify the File in MinIO
+### Step 9: Verify the File in LocalStack S3
 
-Once the transfer is complete, check the **consumer-bucket** in MinIO for the transferred file. Access MinIO at [http://localhost:9000](http://localhost:9000) and log in with `admin` / `password`.
-
+```bash
+aws --endpoint-url=http://localhost:4566 s3 ls s3://<bucket-name>
+```
+### Expected Output
+```json
+{
+    "Key": "test-document.txt"
+}
+```
 
 ### Step 10: Retrieve the Region of a Bucket
 
-To retrieve the region of a bucket using the AWS CLI, use the following command:
-
 ```bash
-aws --endpoint-url http://localhost:9000 s3api get-bucket-location --bucket <bucket-name>
+aws --endpoint-url http://localhost:4566 s3api get-bucket-location --bucket <bucket-name>
 ```
-### expected Output
-
+### Expected Output
 ```json
 {
     "LocationConstraint": "eu-central-1"
 }
 ```
-## Stop docker container
-Execute the following command in a terminal window to stop the docker container:
+
+### Step 11: List Objects in a Bucket
+
 ```bash
-docker-compose -f policy/policy-02-provision/docker-compose.yml down
+aws --endpoint-url=http://localhost:4566 s3api list-objects --bucket <bucket-name>
+```
+### Expected Output
+```json
+{
+    "Contents": [
+        {
+            "Key": "test-document.txt"
+        }
+    ]
+}
+```
+
+## Stop LocalStack
+
+To stop the LocalStack container:
+
+```bash
+docker-compose -f policy/policy-02-provision/resources/docker-compose.yml down
 ```
 
 ---

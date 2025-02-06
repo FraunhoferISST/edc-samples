@@ -37,11 +37,6 @@ dependencies {
     testImplementation(libs.testcontainers.hashicorp.vault)
     testImplementation(libs.testcontainers.localstack)
     testImplementation(libs.aws.sdk.s3)
-    testImplementation(libs.aws.sdk.core)
-    testImplementation(libs.aws.sdk.auth)
-    testImplementation(libs.aws.sdk.regions)
-    testImplementation(libs.aws.sdk.awscore)
-    testImplementation(libs.aws.sdk.utils)
 
     // runtimes
     testCompileOnly(project(":basic:basic-01-basic-connector"))
