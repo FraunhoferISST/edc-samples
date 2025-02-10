@@ -29,6 +29,7 @@ edc-control-plane-api-client = { module = "org.eclipse.edc:control-plane-api-cli
 edc-control-plane-api = { module = "org.eclipse.edc:control-plane-api", version.ref = "edc" }
 edc-control-plane-core = { module = "org.eclipse.edc:control-plane-core", version.ref = "edc" }
 edc-control-plane-spi = { module = "org.eclipse.edc:control-plane-spi", version.ref = "edc" }
+edc-provision-aws-s3 = { module = "org.eclipse.edc.aws:provision-aws-s3", version.ref = "edc" }
 edc-data-plane-signaling-api = { module = "org.eclipse.edc:data-plane-signaling-api", version.ref = "edc" }
 edc-data-plane-signaling-client = { module = "org.eclipse.edc:data-plane-signaling-client", version.ref = "edc" }
 edc-data-plane-public-api = { module = "org.eclipse.edc:data-plane-public-api-v2", version.ref = "edc" }
@@ -81,6 +82,11 @@ edc-data-plane-util = { module = "org.eclipse.edc:data-plane-util", version.ref 
 testcontainers-localstack = { module = "org.testcontainers:localstack", version.ref = "testcontainers" }
 aws-sdk-s3 = { module = "software.amazon.awssdk:s3", version.ref = "awsSdk" }
 
+# federated catalog modules
+edc-fc-spi-core = { module = "org.eclipse.edc:federated-catalog-spi", version.ref = "edc" }
+edc-fc-core = { module = "org.eclipse.edc:federated-catalog-core", version.ref = "edc" }
+edc-fc-ext-api = { module = "org.eclipse.edc:federated-catalog-api", version.ref = "edc" }
+edc-fc-spi-crawler = { module = "org.eclipse.edc:crawler-spi", version.ref = "edc" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }

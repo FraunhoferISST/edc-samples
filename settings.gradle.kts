@@ -51,17 +51,18 @@ include(":advanced:advanced-01-open-telemetry:open-telemetry-runtime")
 include(":policy:policy-01-policy-enforcement:policy-enforcement-provider")
 include(":policy:policy-01-policy-enforcement:policy-enforcement-consumer")
 include(":policy:policy-01-policy-enforcement:policy-functions")
-include(":policy:policy-02-provision:policy-provision")
-
-
-//policy
 
 include(":policy:policy-02-provision:policy-provision-consumer")
 include(":policy:policy-02-provision:policy-provision-provider")
 
-include(":policy:policy-02-provision:provision-aws-s3")
-include(":policy:policy-02-provision:policy-provision-consumer")
-include(":policy:policy-02-provision:policy-provision-provider")
+// federated catalog
+include(":federated-catalog:fc-00-basic:federated-catalog-base")
+include(":federated-catalog:fc-00-basic:fixed-node-resolver")
+include(":federated-catalog:fc-01-embedded:fc-connector")
+include(":federated-catalog:fc-02-standalone:standalone-fc")
+include(":federated-catalog:fc-03-static-node-directory:target-node-resolver")
+include(":federated-catalog:fc-03-static-node-directory:standalone-fc-with-node-resolver")
+include(":federated-catalog:fc-03-static-node-directory:embedded-fc-with-node-resolver")
 
 // modules for code samples ------------------------------------------------------------------------
 include(":advanced:advanced-02-custom-runtime")

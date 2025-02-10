@@ -6,7 +6,7 @@ services:
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=s3
+      - SERVICES=s3,iam,sts
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
     volumes:

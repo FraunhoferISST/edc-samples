@@ -45,7 +45,7 @@ dependencies {
     implementation(libs.edc.data.plane.aws.s3)
     implementation(libs.edc.http)
 
-    implementation(project(":policy:policy-02-provision:provision-aws-s3"))
+    implementation(libs.edc.provision.aws.s3)
 }
 
 application {
