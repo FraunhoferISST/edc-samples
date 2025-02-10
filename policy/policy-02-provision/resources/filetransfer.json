@@ -12,7 +12,7 @@
     "type": "AmazonS3",
     "region": "us-east-1",
     "bucketName": "consumer-bucket",
-    "objectName": "test-document.txt",
+    "objectName": "test-document.json",
     "endpointOverride": "http://localhost:4566",
     "accessKeyId": "admin",
     "secretAccessKey": "password"

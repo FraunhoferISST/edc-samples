@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2023 Fraunhofer Institute for Software and Systems Engineering
+ *  Copyright (c) 2025 Fraunhofer Institute for Software and Systems Engineering
  *
  *  This program and the accompanying materials are made available under the
  *  terms of the Apache License, Version 2.0 which is available at
@@ -23,6 +23,8 @@ import org.eclipse.edc.spi.monitor.Monitor;
 
 import java.util.Objects;
 
+import static java.lang.String.format;
+
 public class RegionConstraintFunction implements AtomicConstraintRuleFunction<Permission, ProvisionManifestVerifyPolicyContext> {
     private final Monitor monitor;
 
@@ -33,25 +35,26 @@ public class RegionConstraintFunction implements AtomicConstraintRuleFunction<Pe
     @Override
     public boolean evaluate(Operator operator, Object rightValue, Permission rule, ProvisionManifestVerifyPolicyContext context) {
         monitor.info("Operator: " + operator + ", Right Value: " + rightValue);
-
-        if (!(rightValue instanceof String)) {
-            return false;
-        }
-
+        
+        var rightValueString = (String) rightValue;
         var manifestContext = context.resourceManifestContext();
-        if (manifestContext == null) {
-            return false;
-        }
-
+        
         var updatedDefinitions = manifestContext.getDefinitions(S3BucketResourceDefinition.class)
                 .stream()
                 .map(definition -> {
-                    String region = definition.getRegionId();
+                    var region = definition.getRegionId();
                     if (Objects.requireNonNull(operator) == Operator.EQ) {
-                        if (!region.startsWith("eu")) {
-                            monitor.warning("Region does not start with 'eu'. Setting to default: eu-central-1.");
+                        if (!region.startsWith(rightValueString)) {
+                            monitor.warning(format("Region does not start with '%s'. Setting to default: eu-central-1.", rightValueString));
                             region = "eu-central-1";
-                            return definition.toBuilder().regionId(region).build();
+                            //return definition.toBuilder().regionId(region).build();
+                            return S3BucketResourceDefinition.Builder.newInstance()
+                                    .id(definition.getId())
+                                    .transferProcessId(definition.getTransferProcessId())
+                                    .regionId(region)
+                                    .bucketName(definition.getBucketName())
+                                    .endpointOverride(definition.getEndpointOverride())
+                                    .build();
                         }
                     }
                     return definition;

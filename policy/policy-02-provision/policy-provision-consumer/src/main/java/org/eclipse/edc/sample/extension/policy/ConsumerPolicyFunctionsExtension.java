@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2023 Fraunhofer Institute for Software and Systems Engineering
+ *  Copyright (c) 2025 Fraunhofer Institute for Software and Systems Engineering
  *
  *  This program and the accompanying materials are made available under the
  *  terms of the Apache License, Version 2.0 which is available at
@@ -30,7 +30,7 @@ import static org.eclipse.edc.connector.controlplane.transfer.spi.policy.Provisi
 @Extension(value = ConsumerPolicyFunctionsExtension.NAME)
 public class ConsumerPolicyFunctionsExtension implements ServiceExtension {
     public static final String NAME = "Consumer Policy Functions Extension";
-    public static final String KEY = "https://w3id.org/edc/v0.0.1/ns/region";
+    public static final String KEY = "https://w3id.org/edc/v0.0.1/ns/location";
 
     @Inject
     private Monitor monitor;
@@ -48,6 +48,7 @@ public class ConsumerPolicyFunctionsExtension implements ServiceExtension {
 
         policyEngine.registerFunction(ProvisionManifestVerifyPolicyContext.class, Permission.class, KEY, new RegionConstraintFunction(monitor));
 
+        // store credentials for accessing the Localstack container
         vault.storeSecret("accessKeyId", "admin");
         vault.storeSecret("secretAccessKey", "password");
     }

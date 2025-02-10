@@ -12,11 +12,11 @@
         "action": "use",
         "constraint": {
           "@type": "AtomicConstraint",
-          "leftOperand": "region",
+          "leftOperand": "location",
           "operator": {
             "@id": "odrl:eq"
           },
-          "rightOperand": "eu-central-1"
+          "rightOperand": "eu"
         }
       }],
     "prohibition": [],

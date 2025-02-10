@@ -9,6 +9,7 @@
   },
   "dataAddress": {
     "type": "HttpData",
+    "name": "test-document.json",
     "baseUrl": "https://jsonplaceholder.typicode.com/users",
     "proxyPath": "true"
   }
