@@ -1,0 +1,20 @@
+{
+  "@context": {
+    "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+  },
+  "@type": "TransferRequestDto",
+  "counterPartyId": "provider",
+  "counterPartyAddress": "http://localhost:8282/protocol",
+  "contractId": "{{contract-agreement-id}}",
+  "protocol": "dataspace-protocol-http",
+  "transferType": "AmazonS3-PUSH",
+  "dataDestination": {
+    "type": "AmazonS3",
+    "region": "us-east-1",
+    "bucketName": "consumer-bucket",
+    "objectName": "test-document.json",
+    "endpointOverride": "http://localhost:4566",
+    "accessKeyId": "admin",
+    "secretAccessKey": "password"
+  }
+}

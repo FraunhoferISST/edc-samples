@@ -9,6 +9,8 @@
  *
  *  Contributors:
  *       Bayerische Motoren Werke Aktiengesellschaft (BMW AG) - initial API and implementation
+ *       Fraunhofer-Gesellschaft - dependencies for Federated Catalog Tests
+ *       Fraunhofer-Gesellschaft - set working directory to project directory
  *
  */
 
@@ -29,10 +31,12 @@ dependencies {
     testImplementation(libs.testcontainers.junit)
     testImplementation(libs.testcontainers.kafka)
     testImplementation(libs.kafka.clients)
-    testImplementation(libs.testcontainers.minio)
-    testImplementation(libs.testcontainers.hashicorp.vault)
-    testImplementation(libs.azure.storage.blob)
     testImplementation(libs.minio.io)
+    testImplementation(libs.testcontainers.minio)
+    testImplementation(libs.azure.storage.blob)
+    testImplementation(libs.testcontainers.hashicorp.vault)
+    testImplementation(libs.testcontainers.localstack)
+    testImplementation(libs.aws.sdk.s3)
 
     // runtimes
     testCompileOnly(project(":basic:basic-01-basic-connector"))
@@ -52,9 +56,20 @@ dependencies {
     testCompileOnly(project(":policy:policy-01-policy-enforcement:policy-enforcement-consumer"))
     testCompileOnly(project(":policy:policy-01-policy-enforcement:policy-functions"))
 
+    testCompileOnly(project(":policy:policy-02-provision:policy-provision-consumer"))
+    testCompileOnly(project(":policy:policy-02-provision:policy-provision-provider"))
+
+
     testCompileOnly(project(":transfer:transfer-05-file-transfer-cloud:cloud-transfer-provider"))
     testCompileOnly(project(":transfer:transfer-05-file-transfer-cloud:cloud-transfer-consumer"))
     testCompileOnly(project(":transfer:transfer-05-file-transfer-cloud:transfer-file-cloud"))
+
+    testCompileOnly(project(":federated-catalog:fc-00-basic:fixed-node-resolver"))
+    testCompileOnly(project(":federated-catalog:fc-01-embedded:fc-connector"))
+    testCompileOnly(project(":federated-catalog:fc-02-standalone:standalone-fc"))
+    testCompileOnly(project(":federated-catalog:fc-03-static-node-directory:target-node-resolver"))
+    testCompileOnly(project(":federated-catalog:fc-03-static-node-directory:standalone-fc-with-node-resolver"))
+    testCompileOnly(project(":federated-catalog:fc-03-static-node-directory:embedded-fc-with-node-resolver"))
 }
 
 tasks.compileJava {

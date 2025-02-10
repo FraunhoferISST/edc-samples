@@ -14,8 +14,8 @@
 
 package org.eclipse.edc.samples.transfer.streaming;
 
-import jakarta.json.Json;
 import okhttp3.mockwebserver.MockWebServer;
+import org.eclipse.edc.connector.controlplane.test.system.utils.LazySupplier;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.junit.extensions.EmbeddedRuntime;
 import org.eclipse.edc.junit.extensions.RuntimeExtension;
@@ -30,7 +30,6 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.util.Map;
 import java.util.UUID;
 
 import static java.util.concurrent.Executors.newScheduledThreadPool;
@@ -39,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.eclipse.edc.connector.controlplane.transfer.spi.types.TransferProcessStates.STARTED;
 import static org.eclipse.edc.samples.common.FileTransferCommon.getFileContentFromRelativePath;
-import static org.eclipse.edc.samples.common.FileTransferCommon.getFileFromRelativePath;
+import static org.eclipse.edc.samples.util.ConfigPropertiesLoader.fromPropertiesFile;
 
 @EndToEndTest
 public class Streaming01httpToHttpTest {
@@ -50,36 +49,26 @@ public class Streaming01httpToHttpTest {
     private static final StreamingParticipant PROVIDER = StreamingParticipant.Builder.newStreamingInstance()
             .name("provider")
             .id("provider")
-            .managementEndpoint(new StreamingParticipant.Endpoint(URI.create("http://localhost:18181/management")))
-            .protocolEndpoint(new StreamingParticipant.Endpoint(URI.create("http://localhost:18182/protocol")))
-            .controlEndpoint(new StreamingParticipant.Endpoint(URI.create("http://localhost:18183/control")))
+            .controlPlaneManagement(new LazySupplier<>(() -> URI.create("http://localhost:18181/management")))
+            .controlPlaneProtocol(new LazySupplier<>(() -> URI.create("http://localhost:18182/protocol")))
             .build();
 
     private static final StreamingParticipant CONSUMER = StreamingParticipant.Builder.newStreamingInstance()
             .name("consumer")
             .id("consumer")
-            .managementEndpoint(new StreamingParticipant.Endpoint(URI.create("http://localhost:28181/management")))
-            .protocolEndpoint(new StreamingParticipant.Endpoint(URI.create("http://localhost:28182/protocol")))
-            .controlEndpoint(new StreamingParticipant.Endpoint(URI.create("http://localhost:28183/control")))
+            .controlPlaneManagement(new LazySupplier<>(() -> URI.create("http://localhost:28181/management")))
+            .controlPlaneProtocol(new LazySupplier<>(() -> URI.create("http://localhost:28182/protocol")))
             .build();
 
     @RegisterExtension
     static RuntimeExtension providerConnector = new RuntimePerClassExtension(new EmbeddedRuntime(
-            "provider",
-            Map.of(
-                    "edc.fs.config", getFileFromRelativePath(SAMPLE_FOLDER + "/streaming-01-runtime/provider.properties").getAbsolutePath()
-            ),
-            ":transfer:streaming:streaming-01-http-to-http:streaming-01-runtime"
-    ));
+            "provider", ":transfer:streaming:streaming-01-http-to-http:streaming-01-runtime"
+    ).configurationProvider(fromPropertiesFile(SAMPLE_FOLDER + "/streaming-01-runtime/provider.properties")));
 
     @RegisterExtension
     static RuntimeExtension consumerConnector =  new RuntimePerClassExtension(new EmbeddedRuntime(
-            "consumer",
-            Map.of(
-                    "edc.fs.config", getFileFromRelativePath(SAMPLE_FOLDER + "/streaming-01-runtime/consumer.properties").getAbsolutePath()
-            ),
-            ":transfer:streaming:streaming-01-http-to-http:streaming-01-runtime"
-    ));
+            "consumer", ":transfer:streaming:streaming-01-http-to-http:streaming-01-runtime"
+    ).configurationProvider(fromPropertiesFile(SAMPLE_FOLDER + "/streaming-01-runtime/consumer.properties")));
     private final int httpReceiverPort = Ports.getFreePort();
     private final MockWebServer consumerReceiverServer = new MockWebServer();
 
@@ -97,14 +86,23 @@ public class Streaming01httpToHttpTest {
         PROVIDER.createPolicyDefinition(getFileContentFromRelativePath(SAMPLE_FOLDER + "/policy-definition.json"));
         PROVIDER.createContractDefinition(getFileContentFromRelativePath(SAMPLE_FOLDER + "/contract-definition.json"));
 
-        var destination = Json.createObjectBuilder()
-                .add("type", "HttpData")
-                .add("baseUrl", "http://localhost:" + httpReceiverPort)
-                .build();
-        var transferProcessId = CONSUMER.requestAssetFrom("stream-asset", PROVIDER)
-                .withDestination(destination)
-                .withTransferType("HttpData-PUSH")
-                .execute();
+        var catalogDatasetId = CONSUMER.fetchDatasetFromCatalog(getFileContentFromRelativePath(SAMPLE_FOLDER + "/get-dataset.json"));
+        var negotiateContractBody = getFileContentFromRelativePath(SAMPLE_FOLDER + "/negotiate-contract.json")
+                                        .replace("{{offerId}}", catalogDatasetId);
+        
+        var contractNegotiationId = CONSUMER.negotiateContract(negotiateContractBody);
+    
+        await().atMost(TIMEOUT).untilAsserted(() -> {
+            var contractAgreementId = CONSUMER.getContractAgreementId(contractNegotiationId);
+            assertThat(contractAgreementId).isNotNull();
+        });
+        var contractAgreementId = CONSUMER.getContractAgreementId(contractNegotiationId);
+        
+        var requestBody = getFileContentFromRelativePath(SAMPLE_FOLDER + "/transfer.json")
+                                .replace("{{contract-agreement-id}}", contractAgreementId)
+                                .replace("4000", "" + httpReceiverPort);
+
+        var transferProcessId = CONSUMER.startTransfer(requestBody);
 
         await().atMost(TIMEOUT).untilAsserted(() -> {
             var state = CONSUMER.getTransferProcessState(transferProcessId);

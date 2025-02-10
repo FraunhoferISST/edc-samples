@@ -14,7 +14,10 @@
 
 package org.eclipse.edc.samples.transfer.streaming;
 
+import org.eclipse.edc.connector.controlplane.test.system.utils.LazySupplier;
 import org.eclipse.edc.connector.controlplane.test.system.utils.Participant;
+
+import java.net.URI;
 
 import static io.restassured.http.ContentType.JSON;
 import static org.eclipse.edc.jsonld.spi.JsonLdKeywords.ID;
@@ -24,8 +27,6 @@ import static org.eclipse.edc.jsonld.spi.JsonLdKeywords.ID;
  */
 public class StreamingParticipant extends Participant {
 
-    protected Endpoint controlEndpoint;
-
     protected StreamingParticipant() {
     }
 
@@ -34,7 +35,7 @@ public class StreamingParticipant extends Participant {
     }
 
     public String createAsset(String requestBody) {
-        return managementEndpoint.baseRequest()
+        return baseManagementRequest()
                 .contentType(JSON)
                 .body(requestBody)
                 .when()
@@ -48,7 +49,7 @@ public class StreamingParticipant extends Participant {
     }
 
     public String createPolicyDefinition(String requestBody) {
-        return managementEndpoint.baseRequest()
+        return baseManagementRequest()
                 .contentType(JSON)
                 .body(requestBody)
                 .when()
@@ -60,13 +61,60 @@ public class StreamingParticipant extends Participant {
     }
 
     public String createContractDefinition(String requestBody) {
-        return managementEndpoint.baseRequest()
+        return baseManagementRequest()
                 .contentType(JSON)
                 .body(requestBody)
                 .when()
                 .post("/v3/contractdefinitions")
                 .then()
                 .statusCode(200)
+                .extract().jsonPath().getString(ID);
+    }
+
+    public String fetchDatasetFromCatalog(String requestBody) {
+        return baseManagementRequest()
+                .contentType(JSON)
+                .body(requestBody)
+                .when()
+                .post("/v3/catalog/dataset/request")
+                .then()
+                .statusCode(200)
+                .contentType(JSON)
+                .extract().jsonPath().getString("'odrl:hasPolicy'.@id");
+    }
+
+    public String negotiateContract(String requestBody) {
+        return baseManagementRequest()
+                .contentType(JSON)
+                .body(requestBody)
+                .when()
+                .post("/v3/contractnegotiations/")
+                .then()
+                .statusCode(200)
+                .contentType(JSON)
+                .extract().jsonPath().getString(ID);
+    }
+
+    public String getContractAgreementId(String contractNegotiationId) {
+        return baseManagementRequest()
+                .contentType(JSON)
+                .when()
+                .get("/v3/contractnegotiations/" + contractNegotiationId)
+                .then()
+                .statusCode(200)
+                .contentType(JSON)
+                .extract().jsonPath().getString("contractAgreementId");
+    }
+
+    public String startTransfer(String requestBody) {
+        return baseManagementRequest()
+                .contentType(JSON)
+                .body(requestBody)
+                .when()
+                .post("/v3/transferprocesses")
+                .then()
+                .statusCode(200)
+                .contentType(JSON)
                 .extract().jsonPath().getString(ID);
     }
 
@@ -80,14 +128,16 @@ public class StreamingParticipant extends Participant {
             return new Builder<>(new StreamingParticipant());
         }
 
-        public B controlEndpoint(Endpoint controlEndpoint) {
-            participant.controlEndpoint = controlEndpoint;
+        public B controlPlaneManagement(LazySupplier<URI> controlPlaneManagement) {
+            participant.controlPlaneManagement = controlPlaneManagement;
             return self();
         }
 
-        @Override
-        public StreamingParticipant build() {
-            return (StreamingParticipant) super.build();
+        public B controlPlaneProtocol(LazySupplier<URI> controlPlaneProtocol) {
+            participant.controlPlaneProtocol = controlPlaneProtocol;
+            return self();
         }
+
     }
+
 }

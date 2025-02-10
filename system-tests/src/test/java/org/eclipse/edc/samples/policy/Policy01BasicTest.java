@@ -23,21 +23,20 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import java.util.Map;
+import java.time.Duration;
 
 import static org.awaitility.Awaitility.await;
-import static org.eclipse.edc.samples.common.FileTransferCommon.getFileFromRelativePath;
 import static org.eclipse.edc.samples.common.NegotiationCommon.getContractNegotiationState;
 import static org.eclipse.edc.samples.common.NegotiationCommon.negotiateContract;
 import static org.eclipse.edc.samples.common.PolicyCommon.createAsset;
 import static org.eclipse.edc.samples.common.PolicyCommon.createContractDefinition;
 import static org.eclipse.edc.samples.common.PolicyCommon.createPolicy;
+import static org.eclipse.edc.samples.util.ConfigPropertiesLoader.fromPropertiesFile;
 import static org.eclipse.edc.samples.util.TransferUtil.POLL_INTERVAL;
-import static org.eclipse.edc.samples.util.TransferUtil.TIMEOUT;
 
 @EndToEndTest
 class Policy01BasicTest {
-
+    private static final Duration TIMEOUT = Duration.ofSeconds(90);
     private static final String SAMPLE_FOLDER = "policy/policy-01-policy-enforcement";
     private static final String CREATE_ASSET_FILE_PATH = SAMPLE_FOLDER + "/resources/create-asset.json";
     private static final String CREATE_POLICY_FILE_PATH = SAMPLE_FOLDER + "/resources/create-policy.json";
@@ -93,17 +92,15 @@ class Policy01BasicTest {
     private static RuntimeExtension provider() {
         return new RuntimePerClassExtension(new EmbeddedRuntime(
                 "provider",
-                Map.of("edc.fs.config", getFileFromRelativePath(SAMPLE_FOLDER + "/policy-enforcement-provider/config.properties").getAbsolutePath()),
                 ":policy:policy-01-policy-enforcement:policy-enforcement-provider"
-        ));
+        ).configurationProvider(fromPropertiesFile(SAMPLE_FOLDER + "/policy-enforcement-provider/config.properties")));
     }
 
     private static RuntimeExtension consumer(String configurationFilePath) {
         return new RuntimePerClassExtension(new EmbeddedRuntime(
                 "consumer",
-                Map.of("edc.fs.config", getFileFromRelativePath(configurationFilePath).getAbsolutePath()),
                 ":policy:policy-01-policy-enforcement:policy-enforcement-consumer"
-        ));
+        ).configurationProvider(fromPropertiesFile(configurationFilePath)));
     }
 
 }

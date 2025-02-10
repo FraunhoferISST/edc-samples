@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  localstack:
+    image: localstack/localstack:3.5.0
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3,iam,sts
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+    volumes:
+      - "localstack_data:/var/lib/localstack"
+      - "./init-scripts:/etc/localstack/init-scripts"
+
+volumes:
+  localstack_data:
+    driver: local
