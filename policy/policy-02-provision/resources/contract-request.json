@@ -3,29 +3,29 @@
     "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
   },
   "@type": "ContractRequest",
-  "counterPartyAddress": "http://localhost:8282/protocol",
+  "counterPartyId": "provider",
+  "counterPartyAddress": "http://localhost:19194/protocol",
   "protocol": "dataspace-protocol-http",
   "policy": {
     "@context": "http://www.w3.org/ns/odrl.jsonld",
-    "@id": "MQ==:dGVzdC1kb2N1bWVudA==:YjY2YWU2OGQtNjVmMS00ODEyLTg0MzktMjNlYmZjZjY5YTdk",
     "@type": "Offer",
+    "@id": "MQ==:MQ==:YWJhZWQ5ZTktYjU4MC00ODkyLWE0ZjUtZmI5NDc5NGUzOTk2",
     "assigner": "provider",
-    "target": "test-document",
+    "target": "1",
     "permission": [
       {
-        "action": {
-          "@id": "USE"
-        },
+        "action": "use",
         "constraint": {
-          "leftOperand": {
-            "@id": "POLICY_REGULATE_FILE_PATH"
-          },
+          "@type": "AtomicConstraint",
+          "leftOperand": "location",
           "operator": {
             "@id": "odrl:eq"
           },
-          "rightOperand": "path/to/desired/location/transfer.txt"
+          "rightOperand": "eu"
         }
       }
-    ]
+    ],
+    "prohibition": [],
+    "obligation": []
   }
 }
