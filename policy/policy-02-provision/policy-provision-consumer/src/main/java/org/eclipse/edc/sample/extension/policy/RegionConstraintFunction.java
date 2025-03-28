@@ -41,18 +41,15 @@ public class RegionConstraintFunction implements AtomicConstraintRuleFunction<Pe
         var updatedDefinitions = manifestContext.getDefinitions(S3BucketResourceDefinition.class)
                 .stream()
                 .map(definition -> {
-                    var region = definition.getRegionId();
-                    if (operator == Operator.EQ) {
-                        if (!region.startsWith(rightValueString)) {
-                            monitor.warning(format("Region does not start with '%s'. Setting to default: %s.", rightValueString, DEFAULT_REGION));
-                            return S3BucketResourceDefinition.Builder.newInstance()
-                                    .id(definition.getId())
-                                    .transferProcessId(definition.getTransferProcessId())
-                                    .regionId(DEFAULT_REGION)
-                                    .bucketName(definition.getBucketName())
-                                    .endpointOverride(definition.getEndpointOverride())
-                                    .build();
-                        }
+                    if (!definition.getRegionId().startsWith(rightValueString)) {
+                        monitor.warning(format("Region does not start with '%s'. Setting to default: %s.", rightValueString, DEFAULT_REGION));
+                        return S3BucketResourceDefinition.Builder.newInstance()
+                                .id(definition.getId())
+                                .transferProcessId(definition.getTransferProcessId())
+                                .regionId(DEFAULT_REGION)
+                                .bucketName(definition.getBucketName())
+                                .endpointOverride(definition.getEndpointOverride())
+                                .build();
                     }
                     return definition;
                 })

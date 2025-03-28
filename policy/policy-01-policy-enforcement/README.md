@@ -404,3 +404,5 @@ a consumer cannot negotiate an offer it is not allowed to see.
 ruleBindingRegistry.bind(LOCATION_CONSTRAINT_KEY, CATALOGING_SCOPE);
 policyEngine.registerFunction(CATALOGING_SCOPE, Permission.class, LOCATION_CONSTRAINT_KEY, new LocationConstraintFunction(monitor));
 ```
+
+[Next Chapter](../policy-02-provision/README.md)
